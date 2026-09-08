@@ -119,8 +119,13 @@ Android App
     +-- Models
     +-- Blade Views
     +-- SQLite
-```text
+```
 
+Data transaksi disimpan secara lokal sehingga fitur utama aplikasi tetap dapat digunakan tanpa koneksi internet.
+
+---
+
+## Screenshots
 
 <p align="center">
   <img src="screenshots/dashboard.jpeg" width="30%">
@@ -132,4 +137,4 @@ Android App
   <img src="screenshots/restock.jpeg" width="30%">
   <img src="screenshots/expenses.jpeg" width="30%">
   <img src="screenshots/dark-mode.jpeg" width="30%">
-</p>
+</p>  +-- SQLite
