@@ -1,0 +1,3773 @@
+/* =========================================================
+   TOKO SAYA — Design System v2
+   Tema: Hitam / Putih / Abu-abu, modern & hidup
+========================================================= */
+
+:root {
+    --color-bg: #f6f6f7;
+    --color-surface: #ffffff;
+    --color-border: #e5e5e7;
+
+    --color-text: #111113;
+    --color-text-muted: #6b6b70;
+    --color-text-faint: #9a9aa0;
+
+    --color-primary: #0f9d84;
+    --color-primary-hover: #0c7a68;
+
+    --color-accent: #111113;
+    --color-accent-soft: #f0f0f1;
+
+    --color-success: #16a34a;
+    --color-success-soft: #ecfdf3;
+    --color-success-text: #15803d;
+
+    --color-warning: #d97706;
+    --color-warning-soft: #fffaeb;
+    --color-warning-text: #b45309;
+
+    --color-danger: #dc2626;
+    --color-danger-soft: #fef2f2;
+    --color-danger-text: #b91c1c;
+
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+    --radius-full: 999px;
+
+    --shadow-sm: 0 1px 2px rgba(16, 16, 20, 0.06);
+    --shadow-md: 0 6px 18px rgba(16, 16, 20, 0.08);
+    --shadow-lg: 0 16px 36px rgba(16, 16, 20, 0.16);
+
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    margin: 0;
+    font-family: var(--font-sans);
+    background: var(--color-bg);
+    color: var(--color-text);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+    overflow-x: hidden;
+    /* Safe-area Android (status bar / notch). Butuh viewport-fit=cover
+       di meta viewport (lihat layouts/app.blade.php) supaya env(...)
+       benar-benar terbaca nilainya, bukan 0. */
+    padding-top: env(safe-area-inset-top, 0px);
+}
+
+a {
+    color: inherit;
+}
+
+button {
+    font-family: inherit;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.icon-sm {
+    width: 16px;
+    height: 16px;
+}
+
+.icon-empty {
+    width: 40px;
+    height: 40px;
+    color: var(--color-text-faint);
+    margin: 0 auto 10px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 28px 48px;
+}
+
+.fade-in {
+    animation: fade-in 0.25s ease;
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================================================
+   NAVBAR (DESKTOP)
+========================================================= */
+
+.navbar {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.navbar-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.brand {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--color-primary);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.brand::before {
+    content: "TS";
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: var(--color-primary);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.desktop-menu {
+    display: flex;
+    gap: 2px;
+    background: var(--color-bg);
+    padding: 4px;
+    border-radius: var(--radius-full);
+}
+
+.desktop-menu a {
+    color: var(--color-text-muted);
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s ease, color 0.15s ease;
+    white-space: nowrap;
+}
+
+.desktop-menu a:hover {
+    color: var(--color-text);
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.desktop-menu a.active {
+    background: var(--color-primary);
+    color: #fff;
+}
+
+.main-content {
+    min-height: calc(100vh - 66px);
+}
+
+/* =========================================================
+   BOTTOM NAV (MOBILE)
+========================================================= */
+
+.mobile-menu {
+    display: none;
+}
+
+@media (max-width: 720px) {
+
+    .navbar-content {
+        padding: 12px 20px;
+    }
+
+    .desktop-menu {
+        display: none;
+    }
+
+    .main-content {
+        padding-bottom: 84px;
+    }
+
+    .mobile-menu {
+        position: fixed;
+        display: flex;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 68px;
+        padding-bottom: env(safe-area-inset-bottom);
+        background: var(--color-surface);
+        border-top: 1px solid var(--color-border);
+        box-shadow: 0 -4px 16px rgba(16, 16, 20, 0.06);
+        justify-content: space-around;
+        align-items: center;
+        z-index: 100;
+    }
+
+    .mobile-menu a,
+    .mobile-menu button {
+        color: var(--color-text-faint);
+        text-decoration: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        min-width: 56px;
+        padding: 6px 4px;
+        border-radius: var(--radius-sm);
+        transition: color 0.15s ease, transform 0.1s ease;
+    }
+
+    .mobile-menu a:active,
+    .mobile-menu button:active {
+        transform: scale(0.94);
+    }
+
+    .mobile-menu a.active,
+    .mobile-menu button.active {
+        color: var(--color-primary);
+    }
+
+    .mobile-menu small {
+        font-size: 11px;
+        font-weight: 600;
+    }
+}
+
+/* =========================================================
+   HEADER / PAGE HEADER
+========================================================= */
+
+.header {
+    margin-bottom: 24px;
+}
+
+.header h1 {
+    margin: 0 0 6px;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.header p {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 15px;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 16px 18px;
+    margin-bottom: 16px;
+}
+
+.page-header h1 {
+    margin: 0 0 2px;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+}
+
+.page-header p {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 13px;
+}
+
+/* =========================================================
+   STATISTIK (DASHBOARD)
+========================================================= */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background: var(--color-surface);
+    padding: 18px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.stat-card-highlight {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.stat-card-highlight .stat-label,
+.stat-card-highlight .stat-number,
+.stat-card-highlight .stat-caption {
+    color: #fff;
+}
+
+.stat-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    background: var(--color-accent-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text);
+    margin-bottom: 12px;
+}
+
+.stat-icon .icon {
+    width: 18px;
+    height: 18px;
+}
+
+.stat-icon-success {
+    background: var(--color-success-soft);
+    color: var(--color-success-text);
+}
+
+.stat-icon-danger {
+    background: var(--color-danger-soft);
+    color: var(--color-danger-text);
+}
+
+.stat-icon-dark {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+.stat-label {
+    margin: 0 0 6px;
+    color: var(--color-text-muted);
+    font-size: 12.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.stat-number {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.stat-number-sm {
+    font-size: 19px;
+}
+
+.stat-negative {
+    color: var(--color-danger-soft);
+}
+
+.stat-caption {
+    margin: 6px 0 0;
+    font-size: 12px;
+    color: var(--color-text-faint);
+}
+
+/* =========================================================
+   RINGKASAN KONDISI TOKO
+========================================================= */
+
+.summary-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.summary-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: var(--radius-full);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.summary-badge-danger {
+    background: var(--color-danger-soft);
+    border-color: #fecaca;
+    color: var(--color-danger-text);
+}
+
+.summary-badge-warning {
+    background: var(--color-warning-soft);
+    border-color: #fde68a;
+    color: var(--color-warning-text);
+}
+
+.summary-badge-success {
+    background: var(--color-success-soft);
+    border-color: #bbf7d0;
+    color: var(--color-success-text);
+}
+
+/* =========================================================
+   DASHBOARD GRID (Timeline + Chart)
+========================================================= */
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 16px;
+}
+
+.section {
+    background: var(--color-surface);
+    padding: 22px;
+    border-radius: var(--radius-lg);
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.section h2,
+.section-header h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.link-more {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.link-more:hover {
+    color: var(--color-text);
+}
+
+.muted-text {
+    color: var(--color-text-muted);
+    font-size: 14px;
+}
+
+/* Timeline */
+
+.timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.timeline-item {
+    display: flex;
+    gap: 12px;
+    padding: 10px 0;
+    position: relative;
+}
+
+.timeline-item:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    left: 15px;
+    top: 40px;
+    bottom: -6px;
+    width: 1px;
+    background: var(--color-border);
+}
+
+.timeline-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--color-success-soft);
+    color: var(--color-success-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    z-index: 1;
+}
+
+.timeline-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.timeline-title {
+    margin: 0 0 2px;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.timeline-time {
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--color-text-faint);
+}
+
+/* Bar chart */
+
+.bar-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    height: 160px;
+    padding-top: 10px;
+}
+
+.bar-chart-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    gap: 8px;
+}
+
+.bar-chart-bar {
+    width: 100%;
+    max-width: 28px;
+    background: var(--color-primary);
+    border-radius: 6px 6px 2px 2px;
+    transition: opacity 0.15s ease;
+    min-height: 4px;
+}
+
+.bar-chart-bar:hover {
+    opacity: 0.75;
+}
+
+.bar-chart-label {
+    font-size: 11px;
+    color: var(--color-text-faint);
+    font-weight: 600;
+}
+
+@media (max-width: 900px) {
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =========================================================
+   TOOLBAR (SEARCH + SORT/FILTER)
+========================================================= */
+
+.toolbar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.search-box {
+    flex: 1;
+    min-width: 220px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    color: var(--color-text-faint);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.search-box:focus-within {
+    border-color: var(--color-text);
+    box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+.search-box input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    color: var(--color-text);
+    background: transparent;
+    font-family: inherit;
+}
+
+.search-clear {
+    border: none;
+    background: var(--color-bg);
+    color: var(--color-text-muted);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.search-clear .icon {
+    width: 12px;
+    height: 12px;
+}
+
+#productSort {
+    padding: 10px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--color-text);
+    background: var(--color-surface);
+}
+
+.filter-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.chip {
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    padding: 8px 14px;
+    border-radius: var(--radius-full);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.chip:hover {
+    border-color: #cfd0d3;
+}
+
+.chip.active {
+    background: var(--color-primary);
+    color: #fff;
+    border-color: var(--color-primary);
+}
+
+.category-chip {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+    background: var(--color-accent-soft);
+    color: var(--color-text);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 12px 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 14px;
+}
+
+th {
+    color: var(--color-text-muted);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+tbody tr {
+    transition: background 0.12s ease;
+}
+
+tbody tr:hover {
+    background: var(--color-bg);
+}
+
+/* =========================================================
+   BUTTON
+========================================================= */
+
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 18px;
+    background: var(--color-primary);
+    color: #fff;
+    text-decoration: none;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease;
+    white-space: nowrap;
+}
+
+.btn-primary:hover {
+    background: var(--color-primary-hover);
+}
+
+.btn-primary:active {
+    transform: scale(0.97);
+}
+
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 18px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    text-decoration: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-secondary:hover {
+    background: var(--color-bg);
+    border-color: #d7d7da;
+}
+
+.success-box {
+    background: var(--color-success-soft);
+    color: var(--color-success-text);
+    border: 1px solid #bbf7d0;
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* =========================================================
+   HALAMAN PRODUK
+========================================================= */
+
+.product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+.product-card {
+    background: var(--color-surface);
+    padding: 20px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.product-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.product-info {
+    padding-right: 40px;
+}
+
+.product-info h2 {
+    margin: 0 0 8px;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.product-price {
+    margin: 0 0 10px;
+    font-weight: 600;
+    color: var(--color-text);
+    font-size: 15px;
+}
+
+.product-stock {
+    margin: 0 0 10px;
+    color: var(--color-text-muted);
+    font-size: 14px;
+}
+
+.product-stock strong {
+    color: var(--color-text);
+}
+
+.stock-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.stock-badge::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.stock-badge.stock-aman {
+    background: var(--color-success-soft);
+    color: var(--color-success-text);
+}
+
+.stock-badge.stock-menipis {
+    background: var(--color-warning-soft);
+    color: var(--color-warning-text);
+}
+
+.stock-badge.stock-habis {
+    background: var(--color-danger-soft);
+    color: var(--color-danger-text);
+}
+
+.product-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.btn-edit,
+.btn-restock {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: none;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    width: 100%;
+    transition: filter 0.15s ease;
+}
+
+.btn-edit:hover,
+.btn-restock:hover {
+    filter: brightness(0.96);
+}
+
+.btn-edit {
+    background: var(--color-blue-soft);
+    color: var(--color-blue-text);
+    border: 1px solid transparent;
+}
+
+.btn-restock {
+    background: var(--color-success-soft);
+    color: var(--color-success-text);
+}
+
+.btn-delete {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 50%;
+    background: var(--color-danger-soft);
+    color: var(--color-danger-text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease;
+}
+
+.btn-delete:hover {
+    background: #fee2e2;
+}
+
+/* =========================================================
+   MODAL (TAMBAH / EDIT / RESTOCK / HAPUS / LAINNYA)
+========================================================= */
+
+.edit-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 12, 0.5);
+    z-index: 1000;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.edit-modal.active {
+    display: flex;
+}
+
+.edit-modal-content,
+.delete-modal-content {
+    background: var(--color-surface);
+    width: 100%;
+    max-width: 440px;
+    max-height: 92vh;
+    overflow-y: auto;
+    padding: 24px 22px calc(22px + env(safe-area-inset-bottom));
+    border-radius: 20px 20px 0 0;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    animation: sheet-up 0.2s ease;
+}
+
+@keyframes sheet-up {
+    from {
+        transform: translateY(24px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.delete-modal-content {
+    text-align: center;
+}
+
+.modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 50%;
+    background: var(--color-bg);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close .icon {
+    width: 16px;
+    height: 16px;
+}
+
+.modal-close:hover {
+    background: #eceef1;
+}
+
+.edit-modal-content h2,
+.delete-modal-content h2 {
+    margin: 0 0 6px;
+    font-size: 19px;
+    font-weight: 700;
+    padding-right: 30px;
+}
+
+.modal-description {
+    margin: 0 0 20px;
+    color: var(--color-text-muted);
+    font-size: 14px;
+}
+
+.delete-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    background: var(--color-danger-soft);
+    color: var(--color-danger-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-warning {
+    margin: 0 0 20px;
+    font-size: 13px;
+    color: var(--color-text-faint);
+    background: var(--color-bg);
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.modal-actions .btn-secondary,
+.modal-actions .btn-primary,
+.modal-actions .btn-delete-confirm {
+    flex: 1;
+}
+
+.btn-delete-confirm {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 18px;
+    background: var(--color-danger);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.btn-delete-confirm:hover {
+    background: #b91c1c;
+}
+
+/* More menu (mobile) */
+
+.more-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 12px;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: var(--color-text);
+    transition: background 0.15s ease;
+}
+
+.more-menu-item:hover {
+    background: var(--color-bg);
+}
+
+.more-menu-item .icon {
+    color: var(--color-text-muted);
+}
+
+.more-menu-item div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.more-menu-item strong {
+    font-size: 14px;
+}
+
+.more-menu-item span {
+    font-size: 12.5px;
+    color: var(--color-text-muted);
+}
+
+@media (min-width: 560px) {
+
+    .edit-modal {
+        align-items: center;
+        padding: 20px;
+    }
+
+    .edit-modal-content,
+    .delete-modal-content {
+        border-radius: var(--radius-lg);
+        animation: modal-pop 0.15s ease;
+    }
+
+    @keyframes modal-pop {
+        from {
+            transform: scale(0.97);
+            opacity: 0;
+        }
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+}
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-family: inherit;
+    color: var(--color-text);
+    background: var(--color-surface);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--color-text);
+    box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+.form-group input[readonly] {
+    background: var(--color-bg);
+    color: var(--color-text-muted);
+}
+
+.form-card {
+    background: var(--color-surface);
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+    max-width: 520px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.form-actions .btn-primary,
+.form-actions .btn-secondary {
+    flex: 1;
+    text-align: center;
+}
+
+.error-box {
+    background: var(--color-danger-soft);
+    color: var(--color-danger-text);
+    border: 1px solid #fecaca;
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.error-box ul {
+    margin: 8px 0 0;
+    padding-left: 18px;
+}
+
+/* Preview box (restock/sale) */
+
+.preview-box {
+    background: var(--color-bg);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    margin-bottom: 6px;
+    animation: fade-in 0.2s ease;
+}
+
+.preview-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 13.5px;
+    color: var(--color-text-muted);
+}
+
+.preview-row strong {
+    color: var(--color-text);
+    font-size: 14px;
+}
+
+.preview-row-highlight {
+    border-top: 1px dashed var(--color-border);
+    margin-top: 4px;
+    padding-top: 10px;
+}
+
+.preview-row-highlight strong {
+    color: var(--color-success-text);
+    font-size: 16px;
+}
+
+/* =========================================================
+   RIWAYAT RESTOCK / PENJUALAN / PENGELUARAN
+========================================================= */
+
+.restock-table-wrapper {
+    overflow-x: auto;
+}
+
+.restock-quantity {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+    background: var(--color-success-soft);
+    color: var(--color-success-text);
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.restock-quantity-money {
+    background: var(--color-blue-soft);
+    color: var(--color-blue-text);
+}
+
+.restock-quantity-expense {
+    background: var(--color-orange-soft);
+    color: var(--color-orange-text);
+}
+
+.restock-cards {
+    display: none;
+}
+
+.restock-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.restock-card + .restock-card {
+    margin-top: 10px;
+}
+
+.restock-card-name {
+    font-weight: 700;
+    font-size: 14px;
+    margin: 0 0 4px;
+}
+
+.restock-card-date {
+    margin: 0;
+    font-size: 13px;
+    color: var(--color-text-muted);
+}
+
+/* Cegah tanggal (mis. 04-09-2026) pecah menjadi beberapa baris di kartu
+   transaksi saat lebar layar sempit. */
+.nowrap-date {
+    white-space: nowrap;
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.empty-state {
+    text-align: center;
+    padding: 48px 20px;
+}
+
+.empty-state h2 {
+    margin: 0 0 8px;
+    font-size: 18px;
+}
+
+.empty-state p {
+    margin: 0 0 20px;
+    color: var(--color-text-muted);
+    font-size: 14px;
+}
+
+/* =========================================================
+   RESPONSIVE — TABLET & HP
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 720px) {
+
+    .container {
+        padding: 20px 16px 32px;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+        padding: 14px;
+    }
+
+    .page-header .btn-primary {
+        width: 100%;
+    }
+
+    .section {
+        padding: 16px;
+    }
+
+    .toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .restock-table-wrapper {
+        display: none;
+    }
+
+    .restock-cards {
+        display: block;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .product-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =========================================================
+   V3 ADDITIONS — Pie Chart, Modal Icon Badge, Featured Form,
+   Select Wrapper, Data Management
+   (Ditambahkan di akhir file, tidak mengubah style V2 di atas)
+========================================================= */
+
+/* ---- Modal icon badge (dipakai di modal Restock, dsb) ---- */
+
+.modal-icon-badge {
+    width: 48px;
+    height: 48px;
+    margin: 0 0 14px;
+    border-radius: 50%;
+    background: linear-gradient(155deg, #22c55e, #15803d);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ---- Select dengan ikon di dalam form ---- */
+
+.select-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.select-wrapper-icon {
+    position: absolute;
+    left: 14px;
+    color: var(--color-text-faint);
+    pointer-events: none;
+}
+
+.select-wrapper select {
+    padding-left: 40px !important;
+}
+
+/* ---- Form card "featured" (halaman Restock Produk) ---- */
+
+.form-card-featured {
+    max-width: 560px;
+    text-align: left;
+}
+
+.form-card-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(155deg, var(--color-teal), #0c7a68);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.form-card-icon .icon {
+    width: 24px;
+    height: 24px;
+}
+
+.form-card-title {
+    margin: 0 0 4px;
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.form-card-subtitle {
+    margin: 0 0 22px;
+    color: var(--color-text-muted);
+    font-size: 14px;
+}
+
+.preview-box-featured {
+    border: 1px solid var(--color-border);
+    animation: fade-in 0.2s ease;
+}
+
+.preview-plus {
+    color: var(--color-success-text) !important;
+}
+
+/* ---- Active/click feedback konsisten untuk tombol produk ---- */
+
+.btn-edit:active,
+.btn-restock:active,
+.btn-delete:active {
+    transform: scale(0.95);
+}
+
+/* ---- Pie Chart (Dashboard) ---- */
+
+.pie-chart-wrap {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.pie-chart {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    position: relative;
+    animation: fade-in 0.3s ease;
+}
+
+.pie-chart-center {
+    position: absolute;
+    inset: 20px;
+    background: var(--color-surface);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: inset 0 0 0 1px var(--color-border);
+}
+
+.pie-chart-center span {
+    font-size: 11px;
+    color: var(--color-text-faint);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.pie-chart-center strong {
+    font-size: 13px;
+    font-weight: 700;
+    margin-top: 2px;
+    padding: 0 6px;
+    word-break: break-word;
+}
+
+.pie-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    min-width: 160px;
+}
+
+.pie-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+}
+
+.pie-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.pie-legend-label {
+    color: var(--color-text-muted);
+    font-weight: 600;
+    flex: 1;
+}
+
+.pie-legend-value {
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+@media (max-width: 480px) {
+
+    .pie-chart-wrap {
+        justify-content: center;
+    }
+}
+
+/* ---- Halaman Kelola Data ---- */
+
+.month-picker-form {
+    margin-bottom: 20px;
+}
+
+.month-picker-group {
+    max-width: 280px;
+    margin-bottom: 0;
+}
+
+.data-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.data-summary-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--color-bg);
+    border-radius: var(--radius-md);
+    padding: 14px;
+}
+
+.data-summary-item div {
+    display: flex;
+    flex-direction: column;
+}
+
+.data-summary-item strong {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.data-summary-item span {
+    font-size: 12px;
+    color: var(--color-text-muted);
+}
+
+.data-summary-caption {
+    font-size: 13px;
+    color: var(--color-text-muted);
+    margin: 0 0 20px;
+}
+
+.data-summary-modal {
+    margin-bottom: 6px;
+}
+
+.data-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.data-action-btn {
+    flex: 1;
+    min-width: 200px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.data-action-btn[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@media (max-width: 560px) {
+
+    .data-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .data-actions {
+        flex-direction: column;
+    }
+}
+
+/* =========================================================
+   V4 ADDITIONS — SVG Pie Chart, Page Header dgn Icon,
+   Delete Riwayat Restock
+========================================================= */
+
+/* ---- SVG Pie Chart ---- */
+
+.pie-chart-svg-holder {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    flex-shrink: 0;
+}
+
+.pie-chart-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.pie-slice {
+    stroke: var(--color-surface);
+    stroke-width: 2;
+    cursor: pointer;
+    transform-origin: 100px 100px;
+    transform-box: fill-box;
+    transition: transform 0.15s ease, filter 0.15s ease;
+    opacity: 0;
+    animation: slice-in 0.35s ease forwards;
+}
+
+@keyframes slice-in {
+    from {
+        opacity: 0;
+        transform: scale(0.85);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.pie-slice:hover,
+.pie-slice-active {
+    transform: scale(1.04);
+    filter: brightness(1.08);
+}
+
+.pie-chart-center-svg {
+    position: absolute;
+    inset: 30px;
+    background: var(--color-surface);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: inset 0 0 0 1px var(--color-border), var(--shadow-sm);
+    pointer-events: none;
+    padding: 6px;
+}
+
+.pie-chart-center-svg span {
+    font-size: 10.5px;
+    color: var(--color-text-faint);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.pie-chart-center-svg strong {
+    font-size: 13px;
+    font-weight: 700;
+    margin-top: 3px;
+    word-break: break-word;
+    line-height: 1.25;
+}
+
+.pie-legend-item {
+    border: none;
+    background: none;
+    padding: 6px 4px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    font-family: inherit;
+    text-align: left;
+    width: 100%;
+    transition: background 0.12s ease;
+}
+
+.pie-legend-item:hover {
+    background: var(--color-bg);
+}
+
+@media (max-width: 480px) {
+
+    .pie-chart-svg-holder {
+        width: 150px;
+        height: 150px;
+    }
+}
+
+/* ---- Page header dengan icon ---- */
+
+.page-header-main {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.page-header-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(155deg, var(--color-teal), #0c7a68);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.page-header-icon .icon {
+    width: 21px;
+    height: 21px;
+}
+
+.page-header-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+
+@media (max-width: 720px) {
+
+    .page-header-icon {
+        width: 42px;
+        height: 42px;
+    }
+
+    .page-header-actions {
+        width: 100%;
+    }
+
+    .page-header-actions .btn-primary,
+    .page-header-actions .btn-secondary,
+    .page-header-actions .btn-delete-confirm {
+        flex: 1;
+    }
+}
+
+/* ---- Hapus riwayat restock (per baris & per bulan) ---- */
+
+.restock-delete-btn {
+    border: none;
+    background: var(--color-danger-soft);
+    color: var(--color-danger-text);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease;
+    flex-shrink: 0;
+}
+
+.restock-delete-btn:hover {
+    background: #fee2e2;
+}
+
+.restock-delete-btn:active {
+    transform: scale(0.92);
+}
+
+.restock-delete-btn .icon {
+    width: 14px;
+    height: 14px;
+}
+
+/* ---- Edit riwayat penjualan & pengeluaran (tombol bulat, sama ukuran
+   dengan .restock-delete-btn tapi warna netral) ---- */
+
+.restock-edit-btn {
+    border: none;
+    background: var(--color-blue-soft);
+    color: var(--color-blue-text);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease;
+    flex-shrink: 0;
+}
+
+.restock-edit-btn:hover {
+    background: #d5e5ff;
+}
+
+.restock-edit-btn:active {
+    transform: scale(0.92);
+}
+
+.restock-edit-btn .icon {
+    width: 14px;
+    height: 14px;
+}
+
+/* ---- Kelompok tombol aksi (Edit + Hapus) pada kartu/baris riwayat ---- */
+
+.row-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+td.restock-action-cell {
+    text-align: right;
+}
+
+.restock-card-with-delete {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.restock-card-with-delete .restock-card {
+    flex: 1;
+}
+
+.bulk-delete-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: var(--color-bg);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.bulk-delete-bar-text {
+    font-size: 13.5px;
+    color: var(--color-text-muted);
+}
+
+.confirm-checkbox-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: var(--color-bg);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: var(--color-text-muted);
+}
+
+.confirm-checkbox-row input {
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+/* =========================================================
+   V5 ADDITIONS — Mobile-first App Shell (Fase 1)
+   Ditambahkan di akhir file, murni aditif — tidak mengubah/
+   menghapus rule V2/V3/V4 di atas. Halaman yang belum
+   diredesain (Produk, Restock, dst) tetap tampil seperti
+   sebelumnya sampai Fase 2/3 dikerjakan.
+========================================================= */
+
+:root {
+    --color-teal: #0f9d84;
+    --color-teal-soft: #e3f6f2;
+    --color-teal-text: #0f7a68;
+
+    --color-blue: #2563eb;
+    --color-blue-soft: #e8f0ff;
+    --color-blue-text: #1d4ed8;
+
+    --color-orange: #d97706;
+    --color-orange-soft: #fef3e2;
+    --color-orange-text: #b45309;
+
+    --color-purple: #7c3aed;
+    --color-purple-soft: #f1ebfe;
+    --color-purple-text: #6d28d9;
+
+    --color-navy: #0b1220;
+    --color-navy-glow: #34d399;
+}
+
+/* Sembunyikan navbar tipis desktop di mobile — di HP, brand
+   sudah ditampilkan lewat .app-topbar di dalam konten Dashboard,
+   supaya tidak dobel dengan bottom navigation. */
+@media (max-width: 720px) {
+    .navbar {
+        display: none;
+    }
+
+    .main-content {
+        padding-bottom: 84px;
+        /* Di mobile navbar disembunyikan, jadi tidak perlu offset 66px
+           milik desktop. Pakai viewport modern (dvh) dengan fallback vh
+           supaya tidak "melompat" akibat resize UI Android. */
+        min-height: 100vh;
+        min-height: 100dvh;
+    }
+}
+
+/* ---- App Topbar (brand card, dipakai di atas Dashboard) ---- */
+
+.app-topbar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 16px 18px;
+    margin-bottom: 16px;
+}
+
+.app-topbar-logo {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: var(--radius-md);
+    background: linear-gradient(155deg, var(--color-teal), #0c7a68);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+}
+
+.app-topbar-text h1 {
+    margin: 0 0 2px;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+}
+
+.app-topbar-text p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--color-text-muted);
+}
+
+/* ---- Subsection title (label polos di atas grid, mis. "Akses Cepat") ---- */
+
+.subsection-title {
+    margin: 0 0 10px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+/* ---- Stat grid v2: 2 kolom, warna lembut per konteks ---- */
+
+.stats-grid-v2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.stat-card-v2 {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    box-sizing: border-box;
+    width: 100%;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.stat-card-v2:active {
+    transform: scale(0.98);
+}
+
+.stat-card-v2-icon {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-accent-soft);
+    color: var(--color-text);
+}
+
+.stat-card-v2-icon .icon {
+    width: 19px;
+    height: 19px;
+}
+
+.stat-card-v2-body {
+    min-width: 0;
+    flex: 1;
+}
+
+.stat-card-v2-label {
+    margin: 0 0 3px;
+    font-size: 12.5px;
+    color: var(--color-text-muted);
+    font-weight: 600;
+    line-height: 1.3;
+    overflow-wrap: break-word;
+}
+
+.stat-card-v2-value {
+    margin: 0;
+    font-size: clamp(16px, 5vw, 19px);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    overflow-wrap: break-word;
+}
+
+.stat-card-v2-caption {
+    margin: 2px 0 0;
+    font-size: 11.5px;
+    color: var(--color-text-faint);
+}
+
+/* Varian warna icon (soft background + teks berwarna senada) */
+
+.stat-card-v2-icon-teal { background: var(--color-teal-soft); color: var(--color-teal-text); }
+.stat-card-v2-icon-blue { background: var(--color-blue-soft); color: var(--color-blue-text); }
+.stat-card-v2-icon-green { background: var(--color-success-soft); color: var(--color-success-text); }
+.stat-card-v2-icon-orange { background: var(--color-orange-soft); color: var(--color-orange-text); }
+.stat-card-v2-icon-red { background: var(--color-danger-soft); color: var(--color-danger-text); }
+.stat-card-v2-icon-purple { background: var(--color-purple-soft); color: var(--color-purple-text); }
+
+/* Card highlight (Keuntungan) — full width, navy, icon glow */
+
+.stat-card-v2-highlight {
+    grid-column: 1 / -1;
+    background: var(--color-navy);
+    border-color: var(--color-navy);
+    justify-content: space-between;
+}
+
+.stat-card-v2-highlight .stat-card-v2-label {
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.stat-card-v2-highlight .stat-card-v2-value {
+    color: #fff;
+    font-size: 22px;
+}
+
+.stat-card-v2-highlight .stat-card-v2-icon {
+    background: rgba(52, 211, 153, 0.16);
+    color: var(--color-navy-glow);
+}
+
+.stat-card-v2-highlight-trend {
+    margin-left: auto;
+    color: var(--color-navy-glow);
+    filter: drop-shadow(0 0 6px rgba(52, 211, 153, 0.55));
+    flex-shrink: 0;
+}
+
+.stat-card-v2-highlight-trend .icon {
+    width: 30px;
+    height: 30px;
+}
+
+/* ---- Status banner (pill hijau full width, mis. "Semua stok aman") ---- */
+
+.status-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: var(--radius-full);
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.status-banner-success {
+    background: var(--color-success-soft);
+    color: var(--color-success-text);
+}
+
+.status-banner-warning {
+    background: var(--color-warning-soft);
+    color: var(--color-warning-text);
+}
+
+.status-banner-danger {
+    background: var(--color-danger-soft);
+    color: var(--color-danger-text);
+}
+
+/* ---- Info row (mis. "Stok terbanyak") — kartu putih, icon + 2 baris teks ---- */
+
+.info-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 14px 16px;
+    margin-bottom: 20px;
+}
+
+.info-row-icon {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--color-warning-soft);
+    color: var(--color-warning-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-row-icon-danger {
+    background: var(--color-danger-soft);
+    color: var(--color-danger-text);
+}
+
+.info-row-icon .icon {
+    width: 18px;
+    height: 18px;
+}
+
+.info-row-text {
+    min-width: 0;
+}
+
+.info-row-label {
+    margin: 0 0 2px;
+    font-size: 12.5px;
+    color: var(--color-text-muted);
+    font-weight: 600;
+}
+
+.info-row-value {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ---- Quick actions grid ("Akses Cepat") ---- */
+
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.quick-action-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px;
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    color: var(--color-text);
+    font-weight: 700;
+    font-size: 13.5px;
+    border: 1px solid transparent;
+    transition: transform 0.15s ease, filter 0.15s ease;
+    min-width: 0;
+}
+
+.quick-action-card:active {
+    transform: scale(0.97);
+}
+
+.quick-action-card:hover {
+    filter: brightness(0.98);
+}
+
+.quick-action-card .icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.quick-action-card span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.quick-action-card-blue { background: var(--color-blue-soft); color: var(--color-blue-text); }
+.quick-action-card-green { background: var(--color-success-soft); color: var(--color-success-text); }
+.quick-action-card-orange { background: var(--color-orange-soft); color: var(--color-orange-text); }
+.quick-action-card-purple { background: var(--color-purple-soft); color: var(--color-purple-text); }
+
+/* ---- Responsive: 360–430px (HP) ---- */
+
+@media (max-width: 400px) {
+
+    .app-topbar {
+        padding: 14px;
+        gap: 12px;
+    }
+
+    .app-topbar-logo {
+        width: 42px;
+        height: 42px;
+        font-size: 14px;
+    }
+
+    .app-topbar-text h1 {
+        font-size: 18px;
+    }
+
+    .stat-card-v2 {
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .stat-card-v2-value {
+        font-size: 17px;
+    }
+
+    .stat-card-v2-highlight .stat-card-v2-value {
+        font-size: 20px;
+    }
+
+    .quick-action-card {
+        padding: 12px;
+        font-size: 12.5px;
+    }
+}
+
+/* Layar sangat sempit (≤360px): jaga supaya angka besar & label
+   tidak memaksa card melebar keluar viewport. */
+@media (max-width: 360px) {
+
+    .stats-grid-v2,
+    .quick-actions-grid {
+        gap: 8px;
+    }
+
+    .container {
+        padding: 16px 12px 32px;
+    }
+}
+
+/* =========================================================
+   V7 ADDITIONS — Interaction / Press State
+   Murni aditif, tidak mengubah warna/ukuran/spacing/layout/
+   typography apa pun. Hanya menangani highlight tap bawaan
+   Android WebView + focus outline + efek tekan custom.
+   Selector dikumpulkan dari seluruh elemen clickable yang
+   dipakai di app.css & semua view (bottom nav, desktop nav,
+   tombol, card, quick action, chip, icon button, link, dsb).
+========================================================= */
+
+html {
+    -webkit-tap-highlight-color: transparent;
+}
+
+a,
+button,
+input,
+select,
+textarea,
+.btn-primary,
+.btn-secondary,
+.btn-delete-confirm,
+.btn-edit,
+.btn-restock,
+.btn-delete,
+.chip,
+.quick-action-card,
+.stat-card-v2,
+.product-card,
+.modal-close,
+.restock-delete-btn,
+.search-clear,
+.pie-legend-item,
+.more-menu-item,
+.link-more,
+.data-action-btn,
+.mobile-menu a,
+.mobile-menu button,
+.desktop-menu a,
+[role="button"],
+[onclick] {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+}
+
+/* 1) Matikan outline default browser/WebView (kotak biru) di semua
+   elemen clickable... */
+a:focus,
+button:focus,
+input:focus,
+select:focus,
+textarea:focus,
+.btn-primary:focus,
+.btn-secondary:focus,
+.btn-delete-confirm:focus,
+.btn-edit:focus,
+.btn-restock:focus,
+.btn-delete:focus,
+.chip:focus,
+.quick-action-card:focus,
+.stat-card-v2:focus,
+.product-card:focus,
+.modal-close:focus,
+.restock-delete-btn:focus,
+.search-clear:focus,
+.pie-legend-item:focus,
+.more-menu-item:focus,
+.link-more:focus,
+.data-action-btn:focus,
+.mobile-menu a:focus,
+.mobile-menu button:focus,
+.desktop-menu a:focus {
+    outline: none;
+}
+
+/* ...tapi TETAP tampilkan indikator fokus untuk navigasi keyboard/
+   accessibility (screen reader, keyboard eksternal di Android), lewat
+   :focus-visible — ini hanya muncul saat navigasi keyboard, tidak saat
+   disentuh/diklik dengan jari atau mouse, jadi tidak mengganggu visual
+   tap normal. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible,
+.btn-delete-confirm:focus-visible,
+.btn-edit:focus-visible,
+.btn-restock:focus-visible,
+.btn-delete:focus-visible,
+.chip:focus-visible,
+.quick-action-card:focus-visible,
+.stat-card-v2:focus-visible,
+.product-card:focus-visible,
+.modal-close:focus-visible,
+.restock-delete-btn:focus-visible,
+.search-clear:focus-visible,
+.pie-legend-item:focus-visible,
+.more-menu-item:focus-visible,
+.link-more:focus-visible,
+.data-action-btn:focus-visible,
+.mobile-menu a:focus-visible,
+.mobile-menu button:focus-visible,
+.desktop-menu a:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+}
+
+/* 2) Efek tekan custom yang konsisten di seluruh app: scale + opacity
+   halus, transisi cepat. Menggantikan nilai :active lama yang berbeda-
+   beda (0.94/0.95/0.97) di beberapa komponen supaya terasa seragam.
+   Ditulis paling akhir supaya menang di cascade (spesifisitas sama). */
+a:active,
+button:active,
+.btn-primary:active,
+.btn-secondary:active,
+.btn-delete-confirm:active,
+.btn-edit:active,
+.btn-restock:active,
+.btn-delete:active,
+.chip:active,
+.quick-action-card:active,
+.stat-card-v2:active,
+.product-card:active,
+.modal-close:active,
+.restock-delete-btn:active,
+.search-clear:active,
+.pie-legend-item:active,
+.more-menu-item:active,
+.link-more:active,
+.data-action-btn:active,
+.mobile-menu a:active,
+.mobile-menu button:active,
+.desktop-menu a:active {
+    transform: scale(0.98);
+    opacity: 0.92;
+    transition: transform 150ms ease, opacity 150ms ease;
+}
+
+/* product-card & stat-card-v2 sudah punya efek hover (translateY/shadow)
+   di V2/V5 — saat :active (ditekan), batalkan translateY supaya scale
+   di atas terlihat jelas, bukan malah tertumpuk 2 transform berbeda. */
+.product-card:active,
+.stat-card-v2:active {
+    transform: scale(0.98);
+}
+
+/* =========================================================
+   V8 ADDITIONS — Fase 2: Redesain Halaman Produk & Restock
+   Ditambahkan di akhir file, murni aditif — tidak mengubah/
+   menghapus rule V2–V7 di atas, hanya menambahkan/menimpa
+   nilai visual (spacing, radius, hierarchy) untuk class yang
+   SUDAH ADA supaya terasa satu app dengan Dashboard (Fase 1).
+   Tidak ada nama class/JS/logic baru yang bentrok dengan V7
+   Interaction — semua elemen interaktif di bawah ini memakai
+   class yang sudah terdaftar di selector V7 (btn-primary,
+   btn-secondary, btn-edit, btn-restock, btn-delete, chip,
+   product-card, search-clear, modal-close, restock-delete-btn,
+   dst), jadi otomatis mewarisi tap-highlight & press state V7.
+========================================================= */
+
+/* ---- Toolbar (search + sort/filter) — lebih lega & premium ---- */
+
+.toolbar {
+    gap: 12px;
+    margin-bottom: 22px;
+}
+
+.search-box {
+    padding: 13px 16px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    min-height: 48px;
+}
+
+.search-box input {
+    font-size: 16px;
+}
+
+#productSort {
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: 13px 16px;
+    min-height: 48px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.filter-chips {
+    gap: 8px;
+}
+
+.chip {
+    padding: 9px 16px;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* ---- Halaman Produk — product card premium (Fase 2) ---- */
+
+.product-list {
+    gap: 18px;
+}
+
+.product-card {
+    padding: 22px;
+    gap: 18px;
+    border-radius: var(--radius-lg);
+}
+
+.product-info {
+    padding-right: 44px;
+}
+
+.product-info h2 {
+    font-size: 17.5px;
+    overflow-wrap: break-word;
+}
+
+/* Hierarki harga & stok: harga jadi nilai utama (besar & tegas,
+   selaras dengan .stat-card-v2-value di Dashboard), stok jadi
+   info sekunder yang lebih kalem. */
+
+.product-price {
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+}
+
+.product-stock {
+    font-size: 13.5px;
+    margin: 0 0 12px;
+}
+
+.stock-badge {
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* Tombol Restock & Edit — sentuhan lebih nyaman, radius lebih
+   lembut supaya senada dengan quick-action-card Dashboard. */
+
+.product-actions {
+    gap: 10px;
+}
+
+.btn-edit,
+.btn-restock {
+    padding: 13px 14px;
+    min-height: 46px;
+    border-radius: var(--radius-md);
+    font-size: 13.5px;
+}
+
+/* Tombol Delete: tetap ada & jelas lewat ikon, tapi warna netral
+   secara default supaya tidak terlalu dominan dibanding Restock/
+   Edit — baru terasa "merah" saat ditekan/hover, sebagai konfirmasi
+   visual bahwa ini aksi yang butuh perhatian tanpa mendominasi card. */
+
+.btn-delete {
+    top: 18px;
+    right: 18px;
+    width: 36px;
+    height: 36px;
+    background: var(--color-bg);
+    color: var(--color-text-faint);
+}
+
+.btn-delete:hover,
+.btn-delete:active {
+    background: var(--color-danger-soft);
+    color: var(--color-danger-text);
+}
+
+/* ---- Form (Tambah/Edit Produk, Restock) — nyaman disentuh ---- */
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    margin-bottom: 7px;
+}
+
+.form-group input,
+.form-group select {
+    padding: 13px 14px;
+    border-radius: var(--radius-md);
+    font-size: 16px;
+    min-height: 48px;
+}
+
+.select-wrapper select {
+    padding-left: 42px !important;
+}
+
+.form-card {
+    padding: 24px 22px;
+    border-radius: var(--radius-lg);
+}
+
+.form-card-featured {
+    padding: 26px 22px;
+}
+
+/* Preview box restock — dibuat lebih terasa sebagai "card" hasil
+   perhitungan, bukan sekadar teks polos. */
+
+.preview-box {
+    padding: 16px 18px;
+    border-radius: var(--radius-md);
+}
+
+.preview-box-featured {
+    box-shadow: var(--shadow-sm);
+}
+
+.preview-row-highlight strong {
+    font-size: 17px;
+}
+
+/* Tombol Simpan (primary) & Batal/Kembali (secondary) — dibuat
+   lebih besar & nyaman disentuh, dan pada layar sempit ditumpuk
+   vertikal dengan aksi utama di atas supaya jadi fokus jempol. */
+
+.form-actions,
+.modal-actions {
+    gap: 12px;
+}
+
+.form-actions .btn-primary,
+.form-actions .btn-secondary,
+.modal-actions .btn-primary,
+.modal-actions .btn-secondary,
+.modal-actions .btn-delete-confirm {
+    min-height: 50px;
+    font-size: 14.5px;
+}
+
+@media (max-width: 480px) {
+
+    .form-actions,
+    .modal-actions {
+        flex-direction: column;
+    }
+
+    .form-actions .btn-primary,
+    .modal-actions .btn-primary,
+    .modal-actions .btn-delete-confirm {
+        order: -1;
+        width: 100%;
+    }
+
+    .form-actions .btn-secondary,
+    .modal-actions .btn-secondary {
+        width: 100%;
+    }
+}
+
+/* ---- Riwayat Restock — card mobile lebih jelas hierarkinya ---- */
+
+.bulk-delete-bar {
+    padding: 14px 16px;
+    border-radius: var(--radius-lg);
+    gap: 14px;
+}
+
+.bulk-delete-bar-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.restock-card {
+    padding: 14px 16px;
+    border-radius: var(--radius-lg);
+    gap: 14px;
+}
+
+.restock-card-icon {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--color-success-soft);
+    color: var(--color-success-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.restock-card-icon .icon {
+    width: 17px;
+    height: 17px;
+}
+
+.restock-card-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.restock-card-name {
+    font-size: 14.5px;
+    overflow-wrap: break-word;
+}
+
+.restock-card-date {
+    margin-top: 2px;
+}
+
+.restock-delete-btn {
+    width: 36px;
+    height: 36px;
+}
+
+/* ---- Rapikan di layar sangat sempit (360–430px) ---- */
+
+@media (max-width: 430px) {
+
+    .product-card {
+        padding: 18px;
+    }
+
+    .product-price {
+        font-size: 18px;
+    }
+
+    .form-card,
+    .form-card-featured {
+        padding: 20px 16px;
+    }
+}
+
+/* =========================================================
+   V9 ADDITIONS — Unifikasi Header & Sistem Warna Aksen
+   Dashboard (app-topbar) dijadikan acuan visual untuk header
+   semua halaman lain (.page-header, .form-card-icon,
+   .modal-icon-badge sudah disamakan ukuran/tipografi/radius/
+   shadow-nya di atas). Bagian ini murni menambahkan varian
+   WARNA aksen per halaman/fitur, memakai token warna yang
+   SUDAH ADA (teal/blue/green/orange/purple dari root V4),
+   supaya tiap fitur mudah dikenali tapi tetap terasa satu
+   design system dengan Dashboard. Tidak ada nama class/JS
+   baru yang bentrok, hanya modifier warna tambahan.
+========================================================= */
+
+/* ---- Modifier warna untuk icon badge (page-header-icon,
+   form-card-icon, modal-icon-badge) — tempel salah satu class
+   ini di samping class dasarnya. Diletakkan di akhir file
+   supaya menang di cascade tanpa perlu !important. ---- */
+
+.icon-accent-teal {
+    background: linear-gradient(155deg, var(--color-teal), #0c7a68);
+}
+
+.icon-accent-blue {
+    background: linear-gradient(155deg, var(--color-blue), #1d4ed8);
+}
+
+.icon-accent-green {
+    background: linear-gradient(155deg, #22c55e, #15803d);
+}
+
+.icon-accent-orange {
+    background: linear-gradient(155deg, var(--color-orange), #92400e);
+}
+
+.icon-accent-purple {
+    background: linear-gradient(155deg, var(--color-purple), #5b21b6);
+}
+
+/* ---- Ikon lingkaran pada kartu riwayat (.restock-card-icon)
+   default-nya hijau (restock). Untuk Penjualan & Pengeluaran
+   dibedakan warnanya supaya histori transaksi lebih colorful
+   dan mudah dibedakan sekilas, tanpa mengubah struktur/logic. ---- */
+
+.restock-card-icon-blue {
+    background: var(--color-blue-soft);
+    color: var(--color-blue-text);
+}
+
+.restock-card-icon-orange {
+    background: var(--color-orange-soft);
+    color: var(--color-orange-text);
+}
+
+/* ---- Rapikan header di layar sangat sempit, senada dengan
+   penyesuaian .app-topbar pada breakpoint yang sama. ---- */
+
+@media (max-width: 400px) {
+
+    .page-header {
+        padding: 14px;
+        gap: 12px;
+    }
+
+    .page-header-icon {
+        width: 42px;
+        height: 42px;
+    }
+
+    .page-header h1 {
+        font-size: 18px;
+    }
+}
+/* ================================
+   BACKUP ARCHIVE
+   ================================ */
+
+.backup-archive-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.backup-archive-card {
+    padding: 18px;
+}
+
+.backup-archive-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.backup-archive-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    opacity: 0.6;
+    margin-bottom: 4px;
+}
+
+.backup-archive-header h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.backup-archive-header small {
+    display: block;
+    margin-top: 3px;
+    opacity: 0.55;
+    font-size: 12px;
+}
+
+.backup-archive-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.backup-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: #22c55e;
+}
+
+.backup-archive-files {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.backup-file-button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    text-decoration: none;
+    color: inherit;
+    transition:
+        transform 0.15s ease,
+        background-color 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.backup-file-button:active {
+    transform: scale(0.985);
+}
+
+.backup-file-button:hover {
+    background: rgba(0, 0, 0, 0.025);
+}
+
+.backup-file-icon {
+    flex: 0 0 auto;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 20px;
+    background: rgba(59, 130, 246, 0.08);
+}
+
+.backup-file-content {
+    min-width: 0;
+    flex: 1;
+}
+
+.backup-file-content strong {
+    display: block;
+    font-size: 14px;
+}
+
+.backup-file-content small {
+    display: block;
+    margin-top: 2px;
+    font-size: 12px;
+    opacity: 0.6;
+}
+
+.backup-file-arrow {
+    flex: 0 0 auto;
+    font-size: 24px;
+    line-height: 1;
+    opacity: 0.4;
+}
+
+.empty-state {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 6px;
+    padding: 36px 20px;
+    text-align: center;
+}
+
+.empty-state-icon {
+    font-size: 34px;
+    margin-bottom: 4px;
+}
+
+.empty-state strong {
+    font-size: 15px;
+}
+
+.empty-state span {
+    max-width: 300px;
+    font-size: 13px;
+    opacity: 0.6;
+}
+
+@media (max-width: 640px) {
+    .backup-archive-card {
+        padding: 15px;
+    }
+
+    .backup-archive-header {
+        align-items: flex-start;
+    }
+
+    .backup-archive-header h2 {
+        font-size: 18px;
+    }
+}
+.backup-delete-button {
+    width: 100%;
+    min-height: 44px;
+    margin-top: 12px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 1px solid rgba(220, 38, 38, 0.20);
+    border-radius: 12px;
+    background: rgba(220, 38, 38, 0.035);
+    color: #b42318;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    transition:
+        background-color 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease,
+        transform 0.12s ease,
+        box-shadow 0.18s ease;
+}
+
+.backup-delete-button:hover {
+    background: rgba(220, 38, 38, 0.075);
+    border-color: rgba(220, 38, 38, 0.30);
+}
+
+.backup-delete-button:active {
+    transform: scale(0.985);
+    background: rgba(220, 38, 38, 0.11);
+}
+
+.backup-delete-button:focus-visible {
+    outline: 3px solid rgba(220, 38, 38, 0.14);
+    outline-offset: 2px;
+}
+
+@media (min-width: 700px) {
+    .backup-delete-button {
+        width: auto;
+        min-width: 150px;
+        margin-left: auto;
+    }
+}
+.mobile-more-button {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 3px;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+
+.mobile-more-button-icon {
+    width: 48px;
+    height: 48px;
+    margin-top: -21px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    background: var(--color-primary, #0f766e);
+    color: #fff;
+    border: 4px solid #fff;
+    box-shadow:
+        0 6px 18px rgba(15, 118, 110, 0.22),
+        0 2px 6px rgba(0, 0, 0, 0.10);
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.18s ease;
+}
+
+.mobile-more-button small {
+    line-height: 1;
+}
+
+.mobile-more-button:active .mobile-more-button-icon {
+    transform: scale(0.94);
+}
+
+.mobile-more-button.active .mobile-more-button-icon {
+    box-shadow:
+        0 6px 20px rgba(15, 118, 110, 0.28),
+        0 2px 7px rgba(0, 0, 0, 0.12);
+}
+
+@media (min-width: 700px) {
+    .mobile-more-button {
+        display: none;
+    }
+}
+/* =========================================================
+   V10 — DARK MODE / LIGHT MODE
+   Seluruh aplikasi mengikuti design token --color-*
+========================================================= */
+
+/* -------------------------
+   MODE TERANG — DEFAULT
+------------------------- */
+
+:root {
+    color-scheme: light;
+
+    --color-bg: #f6f6f7;
+    --color-surface: #ffffff;
+    --color-border: #e5e5e7;
+
+    --color-text: #111113;
+    --color-text-muted: #6b6b70;
+    --color-text-faint: #9a9aa0;
+
+    --color-primary: #0f9d84;
+    --color-primary-hover: #0c7a68;
+
+    --color-accent: #111113;
+    --color-accent-soft: #f0f0f1;
+
+    --color-success: #16a34a;
+    --color-success-soft: #ecfdf3;
+    --color-success-text: #15803d;
+
+    --color-warning: #d97706;
+    --color-warning-soft: #fffaeb;
+    --color-warning-text: #b45309;
+
+    --color-danger: #dc2626;
+    --color-danger-soft: #fef2f2;
+    --color-danger-text: #b91c1c;
+
+    --color-teal: #0f9d84;
+    --color-teal-soft: #e3f6f2;
+    --color-teal-text: #0f7a68;
+
+    --color-blue: #2563eb;
+    --color-blue-soft: #e8f0ff;
+    --color-blue-text: #1d4ed8;
+
+    --color-orange: #d97706;
+    --color-orange-soft: #fef3e2;
+    --color-orange-text: #b45309;
+
+    --color-purple: #7c3aed;
+    --color-purple-soft: #f1ebfe;
+    --color-purple-text: #6d28d9;
+
+    --color-navy: #0b1220;
+    --color-navy-glow: #34d399;
+
+    --shadow-sm: 0 1px 2px rgba(16, 16, 20, 0.06);
+    --shadow-md: 0 6px 18px rgba(16, 16, 20, 0.08);
+    --shadow-lg: 0 16px 36px rgba(16, 16, 20, 0.16);
+}
+
+
+/* -------------------------
+   MODE GELAP
+------------------------- */
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+
+    --color-bg: #101413;
+    --color-surface: #181e1c;
+    --color-border: #2b3431;
+
+    --color-text: #f1f5f3;
+    --color-text-muted: #a8b2ae;
+    --color-text-faint: #7f8a85;
+
+    --color-primary: #2ab39e;
+    --color-primary-hover: #239783;
+
+    --color-accent: #f1f5f3;
+    --color-accent-soft: #232a28;
+
+    --color-success: #31c96b;
+    --color-success-soft: #173923;
+    --color-success-text: #63dc8e;
+
+    --color-warning: #f0a33a;
+    --color-warning-soft: #3a2b18;
+    --color-warning-text: #f6bd69;
+
+    --color-danger: #f05252;
+    --color-danger-soft: #3b1d20;
+    --color-danger-text: #ff8585;
+
+    --color-teal: #2ab39e;
+    --color-teal-soft: #173b36;
+    --color-teal-text: #68ddca;
+
+    --color-blue: #5c91ff;
+    --color-blue-soft: #1b2d50;
+    --color-blue-text: #8db1ff;
+
+    --color-orange: #f0a33a;
+    --color-orange-soft: #3a2b18;
+    --color-orange-text: #f6bd69;
+
+    --color-purple: #9a78f5;
+    --color-purple-soft: #2a2144;
+    --color-purple-text: #b99eff;
+
+    --color-navy: #0a0f0e;
+    --color-navy-glow: #4ee2bc;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+    --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.30);
+    --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.45);
+}
+
+
+/* -------------------------
+   GLOBAL
+------------------------- */
+
+html[data-theme="dark"] body {
+    background: var(--color-bg);
+    color: var(--color-text);
+}
+
+html[data-theme="dark"] .navbar {
+    background: rgba(24, 30, 28, 0.94);
+    border-bottom-color: var(--color-border);
+}
+
+html[data-theme="dark"] .desktop-menu {
+    background: var(--color-bg);
+}
+
+html[data-theme="dark"] .desktop-menu a:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--color-text);
+}
+
+
+/* -------------------------
+   TEXT
+------------------------- */
+
+html[data-theme="dark"] h1,
+html[data-theme="dark"] h2,
+html[data-theme="dark"] h3,
+html[data-theme="dark"] h4,
+html[data-theme="dark"] h5,
+html[data-theme="dark"] h6 {
+    color: var(--color-text);
+}
+
+html[data-theme="dark"] .header p,
+html[data-theme="dark"] .page-header p,
+html[data-theme="dark"] .app-topbar-text p,
+html[data-theme="dark"] .form-card-subtitle,
+html[data-theme="dark"] .modal-description,
+html[data-theme="dark"] .muted-text,
+html[data-theme="dark"] .timeline-time,
+html[data-theme="dark"] .product-stock,
+html[data-theme="dark"] .restock-card-date,
+html[data-theme="dark"] .data-summary-caption {
+    color: var(--color-text-muted);
+}
+
+
+/* -------------------------
+   CARD / SECTION
+------------------------- */
+
+html[data-theme="dark"] .page-header,
+html[data-theme="dark"] .section,
+html[data-theme="dark"] .stat-card,
+html[data-theme="dark"] .product-card,
+html[data-theme="dark"] .form-card,
+html[data-theme="dark"] .app-topbar,
+html[data-theme="dark"] .info-row,
+html[data-theme="dark"] .restock-card,
+html[data-theme="dark"] .stat-card-v2,
+html[data-theme="dark"] .search-box,
+html[data-theme="dark"] #productSort,
+html[data-theme="dark"] .chip {
+    background: var(--color-surface);
+    border-color: var(--color-border);
+    color: var(--color-text);
+}
+
+
+/* -------------------------
+   FORM
+------------------------- */
+
+html[data-theme="dark"] .form-group input,
+html[data-theme="dark"] .form-group select,
+html[data-theme="dark"] input,
+html[data-theme="dark"] select,
+html[data-theme="dark"] textarea {
+    background: #121817;
+    border-color: var(--color-border);
+    color: var(--color-text);
+}
+
+html[data-theme="dark"] .form-group input::placeholder,
+html[data-theme="dark"] textarea::placeholder,
+html[data-theme="dark"] .search-box input::placeholder {
+    color: var(--color-text-faint);
+}
+
+html[data-theme="dark"] .form-group input[readonly] {
+    background: #1d2422;
+    color: var(--color-text-muted);
+}
+
+
+/* -------------------------
+   SEARCH
+------------------------- */
+
+html[data-theme="dark"] .search-box {
+    color: var(--color-text-faint);
+}
+
+html[data-theme="dark"] .search-box:focus-within {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(42, 179, 158, 0.15);
+}
+
+html[data-theme="dark"] .search-box input {
+    color: var(--color-text);
+}
+
+html[data-theme="dark"] .search-clear {
+    background: #222927;
+    color: var(--color-text-muted);
+}
+
+
+/* -------------------------
+   TABLE
+------------------------- */
+
+html[data-theme="dark"] th,
+html[data-theme="dark"] td {
+    border-bottom-color: var(--color-border);
+    color: var(--color-text);
+}
+
+html[data-theme="dark"] th {
+    color: var(--color-text-muted);
+}
+
+html[data-theme="dark"] tbody tr:hover {
+    background: #1d2422;
+}
+
+
+/* -------------------------
+   MODAL / BOTTOM SHEET
+------------------------- */
+
+html[data-theme="dark"] .edit-modal {
+    background: rgba(0, 0, 0, 0.68);
+}
+
+html[data-theme="dark"] .edit-modal-content,
+html[data-theme="dark"] .delete-modal-content {
+    background: var(--color-surface);
+    color: var(--color-text);
+}
+
+html[data-theme="dark"] .modal-close {
+    background: #232a28;
+    color: var(--color-text-muted);
+}
+
+html[data-theme="dark"] .modal-close:hover {
+    background: #2b3431;
+}
+
+html[data-theme="dark"] .delete-warning,
+html[data-theme="dark"] .preview-box,
+html[data-theme="dark"] .bulk-delete-bar,
+html[data-theme="dark"] .confirm-checkbox-row,
+html[data-theme="dark"] .data-summary-item {
+    background: var(--color-bg);
+    color: var(--color-text-muted);
+}
+
+
+/* -------------------------
+   MENU LAINNYA
+------------------------- */
+
+html[data-theme="dark"] .more-menu-item {
+    background: transparent;
+    color: var(--color-text);
+}
+
+html[data-theme="dark"] .more-menu-item:hover {
+    background: var(--color-bg);
+}
+
+html[data-theme="dark"] .more-menu-item .icon {
+    color: var(--color-text-muted);
+}
+
+html[data-theme="dark"] .more-menu-item span {
+    color: var(--color-text-muted);
+}
+
+
+/* -------------------------
+   MOBILE BOTTOM NAV
+------------------------- */
+
+html[data-theme="dark"] .mobile-menu {
+    background: rgba(24, 30, 28, 0.97);
+    border-top-color: var(--color-border);
+    box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.35);
+}
+
+html[data-theme="dark"] .mobile-menu a,
+html[data-theme="dark"] .mobile-menu button {
+    color: var(--color-text-faint);
+}
+
+html[data-theme="dark"] .mobile-menu a.active,
+html[data-theme="dark"] .mobile-menu button.active {
+    color: var(--color-primary);
+}
+
+
+/* -------------------------
+   TOMBOL LAINNYA TENGAH
+------------------------- */
+
+html[data-theme="dark"] .mobile-more-button-icon {
+    border-color: var(--color-surface);
+    box-shadow:
+        0 6px 18px rgba(0, 0, 0, 0.35),
+        0 2px 7px rgba(0, 0, 0, 0.25);
+}
+
+
+/* -------------------------
+   PRODUCT
+------------------------- */
+
+html[data-theme="dark"] .product-price,
+html[data-theme="dark"] .product-stock strong,
+html[data-theme="dark"] .product-info h2 {
+    color: var(--color-text);
+}
+
+
+/* -------------------------
+   PREVIEW
+------------------------- */
+
+html[data-theme="dark"] .preview-row {
+    color: var(--color-text-muted);
+}
+
+html[data-theme="dark"] .preview-row strong {
+    color: var(--color-text);
+}
+
+html[data-theme="dark"] .preview-row-highlight {
+    border-top-color: var(--color-border);
+}
+
+
+/* -------------------------
+   CHART
+------------------------- */
+
+html[data-theme="dark"] .pie-chart-center,
+html[data-theme="dark"] .pie-chart-center-svg {
+    background: var(--color-surface);
+}
+
+html[data-theme="dark"] .pie-chart-center span,
+html[data-theme="dark"] .pie-chart-center-svg span,
+html[data-theme="dark"] .pie-legend-label {
+    color: var(--color-text-muted);
+}
+
+html[data-theme="dark"] .pie-legend-value {
+    color: var(--color-text);
+}
+
+html[data-theme="dark"] .pie-legend-item:hover {
+    background: var(--color-bg);
+}
+
+
+/* -------------------------
+   BACKUP ARCHIVE
+------------------------- */
+
+html[data-theme="dark"] .backup-archive-card {
+    background: var(--color-surface);
+    border-color: var(--color-border);
+}
+
+html[data-theme="dark"] .backup-file-button {
+    background: transparent;
+    border-color: var(--color-border);
+    color: var(--color-text);
+}
+
+html[data-theme="dark"] .backup-file-button:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+html[data-theme="dark"] .backup-file-icon {
+    background: rgba(92, 145, 255, 0.12);
+}
+
+html[data-theme="dark"] .backup-archive-label,
+html[data-theme="dark"] .backup-archive-header small,
+html[data-theme="dark"] .backup-file-content small {
+    color: var(--color-text-muted);
+}
+
+
+/* -------------------------
+   STATUS / ALERT
+------------------------- */
+
+html[data-theme="dark"] .success-box {
+    background: var(--color-success-soft);
+    color: var(--color-success-text);
+    border-color: #245b37;
+}
+
+html[data-theme="dark"] .error-box {
+    background: var(--color-danger-soft);
+    color: var(--color-danger-text);
+    border-color: #653137;
+}
+
+html[data-theme="dark"] .status-banner-success {
+    background: var(--color-success-soft);
+    color: var(--color-success-text);
+}
+
+html[data-theme="dark"] .status-banner-warning {
+    background: var(--color-warning-soft);
+    color: var(--color-warning-text);
+}
+
+html[data-theme="dark"] .status-banner-danger {
+    background: var(--color-danger-soft);
+    color: var(--color-danger-text);
+}
+
+
+/* -------------------------
+   QUICK ACTION
+------------------------- */
+
+html[data-theme="dark"] .quick-action-card {
+    border-color: transparent;
+}
+
+html[data-theme="dark"] .quick-action-card-blue {
+    background: var(--color-blue-soft);
+    color: var(--color-blue-text);
+}
+
+html[data-theme="dark"] .quick-action-card-green {
+    background: var(--color-success-soft);
+    color: var(--color-success-text);
+}
+
+html[data-theme="dark"] .quick-action-card-orange {
+    background: var(--color-orange-soft);
+    color: var(--color-orange-text);
+}
+
+html[data-theme="dark"] .quick-action-card-purple {
+    background: var(--color-purple-soft);
+    color: var(--color-purple-text);
+}
+
+
+/* -------------------------
+   STOCK BADGE
+------------------------- */
+
+html[data-theme="dark"] .stock-badge.stock-aman {
+    background: var(--color-success-soft);
+    color: var(--color-success-text);
+}
+
+html[data-theme="dark"] .stock-badge.stock-menipis {
+    background: var(--color-warning-soft);
+    color: var(--color-warning-text);
+}
+
+html[data-theme="dark"] .stock-badge.stock-habis {
+    background: var(--color-danger-soft);
+    color: var(--color-danger-text);
+}
+
+
+/* -------------------------
+   RESTOCK / TRANSACTION BADGE
+------------------------- */
+
+html[data-theme="dark"] .restock-quantity {
+    background: var(--color-success-soft);
+    color: var(--color-success-text);
+}
+
+html[data-theme="dark"] .restock-quantity-money {
+    background: var(--color-blue-soft);
+    color: var(--color-blue-text);
+}
+
+html[data-theme="dark"] .restock-quantity-expense {
+    background: var(--color-orange-soft);
+    color: var(--color-orange-text);
+}
+
+
+/* -------------------------
+   EDIT / DELETE BUTTON
+------------------------- */
+
+html[data-theme="dark"] .btn-edit {
+    background: var(--color-blue-soft);
+    color: var(--color-blue-text);
+}
+
+html[data-theme="dark"] .btn-restock {
+    background: var(--color-success-soft);
+    color: var(--color-success-text);
+}
+
+html[data-theme="dark"] .btn-delete {
+    background: #232a28;
+    color: var(--color-text-faint);
+}
+
+html[data-theme="dark"] .btn-delete:hover,
+html[data-theme="dark"] .btn-delete:active {
+    background: var(--color-danger-soft);
+    color: var(--color-danger-text);
+}
+
+
+/* -------------------------
+   BACKUP DELETE
+------------------------- */
+
+html[data-theme="dark"] .backup-delete-button {
+    background: rgba(240, 82, 82, 0.08);
+    border-color: rgba(240, 82, 82, 0.22);
+    color: var(--color-danger-text);
+}
+
+html[data-theme="dark"] .backup-delete-button:hover {
+    background: rgba(240, 82, 82, 0.14);
+}
+
+
+/* -------------------------
+   DATA / INFO
+------------------------- */
+
+html[data-theme="dark"] .data-summary-item {
+    color: var(--color-text);
+}
+
+html[data-theme="dark"] .data-summary-item span {
+    color: var(--color-text-muted);
+}
+
+html[data-theme="dark"] .link-more {
+    color: var(--color-text-muted);
+}
+
+html[data-theme="dark"] .link-more:hover {
+    color: var(--color-text);
+}
+
+
+/* -------------------------
+   EMPTY STATE
+------------------------- */
+
+html[data-theme="dark"] .empty-state p,
+html[data-theme="dark"] .empty-state span {
+    color: var(--color-text-muted);
+}
+
+
+/* -------------------------
+   FOCUS
+------------------------- */
+
+html[data-theme="dark"] :focus-visible {
+    outline-color: var(--color-primary);
+}
+/* Tombol pengaturan tema di Menu Lainnya */
+
+.more-menu-theme {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.more-menu-theme:active {
+    transform: scale(0.98);
+}
+
+html[data-theme="dark"] .more-menu-theme {
+    color: var(--color-text);
+}

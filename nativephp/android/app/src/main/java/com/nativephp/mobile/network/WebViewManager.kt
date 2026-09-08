@@ -1,0 +1,792 @@
+package com.nativephp.mobile.network
+
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.util.Log
+import android.webkit.*
+import android.widget.Toast
+import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.content.pm.ActivityInfo
+import android.app.Activity
+import android.os.Message
+import com.acsbendi.requestinspectorwebview.RequestInspectorWebViewClient
+import com.nativephp.mobile.bridge.PHPBridge
+import com.nativephp.mobile.ui.MainActivity
+import org.json.JSONObject
+import com.nativephp.mobile.security.LaravelSecurity
+
+class WebViewManager(
+    private val context: Context,
+    private val webView: WebView,
+    private val phpBridge: PHPBridge,
+    // An embedded webview lives INSIDE the native tree (php-mode <webview>
+    // element). It must never drive app-level state: no native/web mode
+    // flips, no chrome updates from response headers — those belong to the
+    // root webview alone.
+    private val embedded: Boolean = false
+) {
+    private val TAG = "PHPMonitor"
+    private var fullscreenView: View? = null
+    private var customViewCallback: WebChromeClient.CustomViewCallback? = null
+
+    companion object {
+        var shared: WebViewManager? = null
+    }
+
+    fun setup() {
+        configureWebViewSettings()
+        setupCookieManager()
+        setupWebViewClient()
+        setupJavaScriptInterfaces()
+        WebViewManager.shared = this // 👈 make this instance globally accessible
+    }
+
+    private fun configureWebViewSettings() {
+        // Don't clear cache on every setup - let it persist for performance
+        // webView.clearCache(true)
+        // webView.clearHistory()
+
+        webView.settings.apply {
+            javaScriptEnabled = true
+            domStorageEnabled = true
+            allowFileAccess = true
+            allowContentAccess = true
+            loadsImagesAutomatically = true
+            blockNetworkImage = false
+            mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+            mediaPlaybackRequiresUserGesture = false // Allows autoplay
+            setSupportMultipleWindows(true) // Required for fullscreen
+            cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK // Prefer cache for faster loads
+        }
+
+        WebView.setWebContentsDebuggingEnabled(true)
+    }
+
+    private fun setupCookieManager() {
+        CookieManager.getInstance().apply {
+            setAcceptCookie(true)
+            setAcceptThirdPartyCookies(webView, true)
+        }
+    }
+
+    private fun setupWebViewClient() {
+        webView.webChromeClient = createWebChromeClient()
+        webView.webViewClient = createCustomWebViewClient()
+    }
+
+    private fun createWebChromeClient(): WebChromeClient {
+        return object : WebChromeClient() {
+            override fun onShowCustomView(view: View, callback: CustomViewCallback) {
+                fullscreenView?.let { onHideCustomView() }
+
+                fullscreenView = view
+                customViewCallback = callback
+
+                (context as? Activity)?.let { activity ->
+                    val decorView = activity.window.decorView as FrameLayout
+                    decorView.addView(view,
+                        FrameLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
+                        )
+                    )
+                }
+
+                webView.visibility = View.GONE
+
+                (context as? Activity)?.requestedOrientation =
+                    ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            }
+
+            override fun onHideCustomView() {
+                (context as? Activity)?.let { activity ->
+                    val decorView = activity.window.decorView as FrameLayout
+
+                    fullscreenView?.let { decorView.removeView(it) }
+                    fullscreenView = null
+
+                    webView.visibility = View.VISIBLE
+
+                    activity.requestedOrientation =
+                        ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+
+                    customViewCallback?.onCustomViewHidden()
+                    customViewCallback = null
+                }
+            }
+
+            override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
+                Log.d(
+                    "$TAG-Console",
+                    "${consoleMessage.message()} -- From line ${consoleMessage.lineNumber()}"
+                )
+                return true
+            }
+
+            override fun onCreateWindow(
+                view: WebView,
+                isDialog: Boolean,
+                isUserGesture: Boolean,
+                resultMsg: Message
+            ): Boolean {
+                // target="_blank" links and window.open() land here because
+                // multiple windows are enabled; without this override they are
+                // silently dropped. There is no second window in the app, so
+                // resolve the URL through a throwaway WebView and route it
+                // like a normal navigation: external → system browser,
+                // local-server → the main WebView.
+                val transport = resultMsg.obj as? WebView.WebViewTransport ?: return false
+                val popup = WebView(view.context)
+                popup.webViewClient = object : WebViewClient() {
+                    override fun shouldOverrideUrlLoading(
+                        popupView: WebView,
+                        request: WebResourceRequest
+                    ): Boolean {
+                        val url = request.url.toString()
+                        Log.d(TAG, "🪟 onCreateWindow resolved: $url")
+                        if ((url.startsWith("http://") || url.startsWith("https://")) &&
+                            !url.contains("127.0.0.1") &&
+                            !url.contains("localhost")
+                        ) {
+                            try {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                context.startActivity(intent)
+                            } catch (e: ActivityNotFoundException) {
+                                Toast.makeText(context, "No app can handle this link", Toast.LENGTH_SHORT).show()
+                            }
+                        } else {
+                            webView.loadUrl(url)
+                        }
+                        popupView.post { popupView.destroy() }
+                        return true
+                    }
+                }
+                transport.webView = popup
+                resultMsg.sendToTarget()
+                return true
+            }
+
+            // <input type="file"> (used by the Restore JSON upload form)
+            // does nothing by default in an Android WebView — the platform
+            // requires the host app to explicitly launch a file picker and
+            // hand the result back. Without this override, tapping "Choose
+            // File" silently does nothing. fileChooserParams.createIntent()
+            // builds the correct system picker intent (respecting the
+            // input's `accept` attribute), and MainActivity owns the
+            // ActivityResultLauncher needed to receive the result (must be
+            // registered before the Activity reaches STARTED — see
+            // MainActivity.launchFileChooserIntent).
+            override fun onShowFileChooser(
+                webView: WebView,
+                filePathCallback: ValueCallback<Array<Uri>>,
+                fileChooserParams: FileChooserParams
+            ): Boolean {
+                val activity = context as? MainActivity ?: return false
+
+                return try {
+                    activity.launchFileChooserIntent(fileChooserParams.createIntent(), filePathCallback)
+                    true
+                } catch (e: ActivityNotFoundException) {
+                    Log.e(TAG, "No app can handle file chooser intent: ${e.message}")
+                    false
+                }
+            }
+        }
+    }
+
+    private fun createCustomWebViewClient(): WebViewClient {
+        return object : WebViewClient() {
+            private val requestInspector = RequestInspectorWebViewClient(webView)
+            private val phpHandler = PHPWebViewClient(phpBridge, context as MainActivity)
+
+            override fun shouldOverrideUrlLoading(
+                view: WebView,
+                request: WebResourceRequest
+            ): Boolean {
+                val url = request.url.toString()
+                val method = request.method
+                Log.d("$TAG-DEBUG", "URL: $url, Method: $method")
+                Log.d(TAG, "⬆️ shouldOverrideUrlLoading: $url")
+
+                // Handle system URL schemes (tel:, mailto:, sms:, geo:) - open with system handler
+                val scheme = request.url.scheme?.lowercase()
+                if (scheme in listOf("tel", "mailto", "sms", "geo")) {
+                    Log.d("WebView", "📞 Intercepted system URL scheme: $url")
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    try {
+                        context.startActivity(intent)
+                    } catch (e: ActivityNotFoundException) {
+                        Log.e("WebView", "No app can handle $scheme: links")
+                        Toast.makeText(context, "No app can handle this link", Toast.LENGTH_SHORT).show()
+                    }
+                    return true
+                }
+
+                if (url.startsWith("nativephp://")) {
+                    Log.d("WebView", "🔗 Intercepted deep link inside WebView: $url")
+
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+
+                    try {
+                        context.startActivity(intent)
+                    } catch (e: ActivityNotFoundException) {
+                        Toast.makeText(context, "No app can handle this link", Toast.LENGTH_SHORT).show()
+                    }
+
+                    return true // prevent WebView from loading it
+                }
+
+                // Jump webview-forward session: the served app generates
+                // absolute links with ITS host (http://<devhost>:<port>/…).
+                // The WebView's origin is 127.0.0.1, so without this those
+                // links classify as "external site" below and open the system
+                // browser. Rewrite them onto 127.0.0.1 — the interception
+                // layer forwards them back to the dev server.
+                if (JumpWebViewSession.isActive &&
+                    request.url.host == JumpWebViewSession.host &&
+                    (if (request.url.port == -1) "80" else request.url.port.toString()) == JumpWebViewSession.port
+                ) {
+                    val rewritten = "http://127.0.0.1${request.url.encodedPath ?: "/"}" +
+                        (request.url.encodedQuery?.let { "?$it" } ?: "")
+                    Log.d(TAG, "🛰️ [JUMP-FORWARD] Rewriting session link → $rewritten")
+                    view.loadUrl(rewritten)
+                    return true
+                }
+
+                if ((url.startsWith("http://") || url.startsWith("https://")) &&
+                    !url.contains("127.0.0.1") &&
+                    !url.contains("localhost") &&
+                    request.isForMainFrame
+                ) {
+                    // This is a navigation request to an external site - open in browser
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    view.context.startActivity(intent)
+                    return true
+                }
+
+                // Handle relative URLs (convert to php://)
+                if (url.startsWith("/")) {
+                    val uri = request.url
+                    val fullUrl = "http://127.0.0.1${uri.encodedPath}" +
+                        (uri.encodedQuery?.let { "?$it" } ?: "")
+
+                    Log.d(TAG, "🛠️ Rewriting relative URL with query: $fullUrl")
+                    view.loadUrl(fullUrl)
+                    return true
+                }
+
+                return false
+            }
+
+            override fun shouldInterceptRequest(
+                view: WebView,
+                request: WebResourceRequest
+            ): WebResourceResponse? {
+                val url = request.url.toString()
+                val method = request.method
+
+                Log.d(TAG, "🔄 Intercepting $method request to $url")
+
+                request.requestHeaders.forEach { (key, value) ->
+                    Log.d("$TAG-Headers", "📋 $key: $value")
+                }
+
+                val inspectorResponse = requestInspector.shouldInterceptRequest(view, request)
+
+                if (url.startsWith("http://") && !url.contains(".") && !url.contains("127.0.0.1") && !url.contains("localhost")) {
+                    val host = url.substring("http://".length).substringBefore("/")
+                    val path = if (url.contains("/")) "/${url.substringAfter("/")}" else "/"
+                    val correctedUrl = "http://127.0.0.1/$host$path"
+
+                    Log.d(TAG, "🔄 Correcting malformed URL from $url to $correctedUrl")
+
+                    // Create a modified request with the corrected URL
+                    val correctedUri = Uri.parse(correctedUrl)
+                    val correctedRequest = object : WebResourceRequest {
+                        override fun getUrl(): Uri = correctedUri
+                        override fun isForMainFrame(): Boolean = request.isForMainFrame
+                        override fun isRedirect(): Boolean = request.isRedirect
+                        override fun hasGesture(): Boolean = request.hasGesture()
+                        override fun getMethod(): String = request.method
+                        override fun getRequestHeaders(): Map<String, String> = request.requestHeaders
+                    }
+
+                    // Handle this corrected request normally
+                    return shouldInterceptRequest(view, correctedRequest)
+                }
+
+                if (!url.contains("127.0.0.1") && !url.contains("localhost")) {
+                    // This is an external resource - let the WebView handle it directly
+                    Log.d(TAG, "📡 External resource - passing to system: $url")
+                    return null // Returning null lets the WebView load it normally
+                }
+
+                // Allow Vite dev server (port 5173) to handle its own requests, including WebSocket upgrades for HMR
+                if (url.contains(":5173")) {
+                    Log.d(TAG, "🔥 Vite dev server request - allowing native WebView handling: $url")
+                    return null
+                }
+
+                return when {
+                    isStaticAssetExtension(url) ||
+                            url.contains("_assets") ||
+                            url.contains("/js/") ||
+                            url.contains("/css/") ||
+                            url.contains("/fonts/") ||
+                            url.contains("/images/") -> {
+                        // Jump webview-forward session: assets live on the
+                        // remote dev server, not in the local bundle.
+                        if (JumpWebViewSession.isActive) {
+                            phpHandler.forwardToRemote(request, null)
+                        } else {
+                            Log.d(TAG, "🖼️ Handling asset request")
+                            phpHandler.handleAssetRequest(url, request.requestHeaders)
+                        }
+                    }
+                    // Regular PHP requests
+                    url.contains("127.0.0.1") -> {
+                        Log.d(TAG, "🌐 Handling PHP request")
+                        val postData = if (request.method.equals("POST", ignoreCase = true) ||
+                            request.method.equals("PUT", ignoreCase = true) ||
+                            request.method.equals("PATCH", ignoreCase = true)) {
+                            val reqId = request.requestHeaders?.get("X-NativePHP-Req-Id")
+                            if (reqId != null) {
+                                // Header may contain a comma-joined list if setRequestHeader
+                                // was called multiple times on the same XHR. Try each ID.
+                                reqId.split(",")
+                                    .map { it.trim() }
+                                    .firstNotNullOfOrNull { id ->
+                                        if (id.isNotEmpty()) phpBridge.consumePostData(id) else null
+                                    }
+                            } else {
+                                // Native form submission — try full URL first, then path only
+                                var data = phpBridge.consumePostData(url)
+                                if (data == null) {
+                                    val path = request.url.path ?: "/"
+                                    data = phpBridge.consumePostData(path)
+                                }
+                                data
+                            }
+                        } else null
+                        // Jump webview-forward session: hand the request
+                        // (with any consumed POST body) to the remote dev
+                        // server instead of the embedded PHP runtime.
+                        if (JumpWebViewSession.isActive) {
+                            phpHandler.forwardToRemote(request, postData)
+                        } else {
+                            phpHandler.handlePHPRequest(request, postData)
+                        }
+                    }
+                    else -> {
+                        Log.d(TAG, "↪️ Delegating to system handler: $url")
+                        inspectorResponse
+                    }
+                }
+            }
+
+            override fun onPageStarted(view: WebView, url: String, favicon: android.graphics.Bitmap?) {
+                super.onPageStarted(view, url, favicon)
+                Log.d(TAG, "🚀 Page started loading: $url")
+
+                // A WebView page load means we are (back) in WebView mode. For a
+                // Route::native screen the response's native-tree publish re-sets
+                // isActive = true (NativeElementBridge), so this is safe; for a
+                // plain web route it stays false. Without this, exit-to-web leaves
+                // the frozen native tree on screen over the loaded WebView page.
+                //
+                // Commit-gated EXIT_WEB swap: while pendingWebSwap is set, keep
+                // the frozen native tree visible through Chromium init — the
+                // flip happens in onPageCommitVisible instead, so the swap never
+                // flashes a blank/stale WebView.
+                val activity = context as? MainActivity
+                if (!embedded && activity?.pendingWebSwap != true) {
+                    com.nativephp.mobile.ui.nativerender.NativeUIBridge.isActive.value = false
+                }
+
+                if (!embedded) {
+                    // Inject safe area insets IMMEDIATELY when page starts loading
+                    // This ensures CSS variables are available before DOM parsing
+                    activity?.injectSafeAreaInsetsToWebView()
+                }
+            }
+
+            override fun onPageCommitVisible(view: WebView, url: String) {
+                super.onPageCommitVisible(view, url)
+                if (embedded) {
+                    return
+                }
+                val activity = context as? MainActivity
+                if (activity?.pendingWebSwap == true) {
+                    activity.pendingWebSwap = false
+                    com.nativephp.mobile.ui.nativerender.NativeUIBridge.isActive.value = false
+                }
+                // Renderer-agnostic first-content signal (web renderer):
+                // the page's first visible commit is honest TTFD.
+                activity?.onFirstContent("web-commit")
+            }
+
+            override fun onPageFinished(view: WebView, url: String) {
+                super.onPageFinished(view, url)
+                Log.d(TAG, "✅ Page finished loading: $url")
+
+                // Inject safe area insets again to ensure they're set
+                (context as? MainActivity)?.injectSafeAreaInsetsToWebView()
+
+                // Inject JavaScript to capture form submissions and AJAX requests
+                injectJavaScript(view)
+            }
+        }
+    }
+
+
+    private fun injectJavaScript(view: WebView) {
+        val jsCode = """
+        (function() {
+            // 🌐 Native event bridge
+            const listeners = {};
+
+            const Native = {
+                on: function(eventName, callback) {
+                    if (!listeners[eventName]) {
+                        listeners[eventName] = [];
+                    }
+                    listeners[eventName].push(callback);
+                },
+                off: function(eventName, callback) {
+                    if (listeners[eventName]) {
+                        listeners[eventName] = listeners[eventName].filter(cb => cb !== callback);
+                    }
+                },
+                dispatch: function(eventName, payload) {
+                    const cbs = listeners[eventName] || [];
+                    cbs.forEach(cb => cb(payload, eventName));
+                }
+            };
+
+            window.Native = Native;
+
+            document.addEventListener("native-event", function (e) {
+                const eventName = e.detail.event;
+                const payload = e.detail.payload;
+
+                window.Native.dispatch(eventName, payload);
+
+
+            });
+
+            // Guard against re-injection on every onPageFinished. Without this,
+            // each injection wraps XHR.send / window.fetch again, and repeated
+            // setRequestHeader('X-NativePHP-Req-Id', ...) calls get joined with
+            // ", " per HTTP spec — making the concatenated value unlookupable.
+            if (window.__nphpPostPatched) {
+                return "POST+PATCH+PUT interception already installed";
+            }
+            window.__nphpPostPatched = true;
+
+            // Unique request ID counter
+            var _nphpReqId = 0;
+
+            // Capture form submissions — native form POSTs can't carry custom headers,
+            // so we store by URL for the fallback lookup in shouldInterceptRequest.
+            //
+            // Forms with enctype="multipart/form-data" that actually have a file
+            // selected are handled separately (submitMultipartForm below):
+            // new FormData(form).entries() gives a real File object for a file
+            // input, and URLSearchParams.append() on a non-string value just calls
+            // .toString() on it — which for a File produces the literal text
+            // "[object File]", never the file's real content. There is also no way
+            // to fix this by letting the browser submit the form natively: Android
+            // WebView's request interception (shouldInterceptRequest, used below to
+            // hand every request to the embedded PHP runtime) has no API to read a
+            // real request's POST body, so the body ALWAYS has to be captured here
+            // in JS and handed over through the string-only AndroidPOST bridge —
+            // and a real native multipart submission would pick its own random
+            // boundary that we have no way to read or match.
+            document.addEventListener('submit', function(e) {
+                var form = e.target;
+                var method = form.method.toLowerCase();
+                if (!["post", "patch", "put"].includes(method)) {
+                    return;
+                }
+
+                var isMultipart = (form.getAttribute('enctype') || '').toLowerCase() === 'multipart/form-data';
+                var fileInputs = Array.prototype.filter.call(
+                    form.querySelectorAll('input[type="file"]'),
+                    function (input) { return input.files && input.files.length > 0; }
+                );
+
+                if (isMultipart && fileInputs.length > 0) {
+                    e.preventDefault();
+                    submitMultipartForm(form, fileInputs);
+                    return;
+                }
+
+                var formData = new FormData(form);
+                var urlEncodedData = new URLSearchParams();
+                for (var pair of formData.entries()) {
+                    urlEncodedData.append(pair[0], pair[1]);
+                }
+
+                var bodyStr = urlEncodedData.toString();
+                // Store by URL — native form submissions don't support custom headers
+                AndroidPOST.logFormPostData(bodyStr, form.action);
+            });
+
+            // Build a real multipart/form-data body (our own boundary) for a form
+            // that has an actual file selected, and send it through the already-
+            // patched window.fetch below — which captures the string body via the
+            // same AndroidPOST bridge every other fetch/XHR request already uses,
+            // so no other bridge/native change is needed for the body to arrive.
+            //
+            // Only text reading (FileReader.readAsText) is used: the one file this
+            // app ever uploads is the JSON backup, so this never needs to carry
+            // arbitrary binary through the string-only bridge.
+            //
+            // 'X-NativePHP-Skip-Redirect-Follow' tells the native side to hand back
+            // the real 3xx response instead of resolving it into a 200 body — so
+            // fetch()'s own redirect-follow gives us the correct final URL, and we
+            // do a real top-level navigation there (full page lifecycle: script
+            // re-injection, CSRF re-extraction) instead of splicing a response body
+            // into the current document.
+            function submitMultipartForm(form, fileInputs) {
+                var boundary = '----NativePHPFormBoundary' + Date.now().toString(16) + Math.random().toString(16).slice(2);
+
+                var fileReads = fileInputs.map(function (input) {
+                    return new Promise(function (resolve, reject) {
+                        var file = input.files[0];
+                        var reader = new FileReader();
+                        reader.onload = function () {
+                            resolve({
+                                name: input.name,
+                                filename: file.name,
+                                type: file.type || 'application/octet-stream',
+                                content: reader.result
+                            });
+                        };
+                        reader.onerror = function () {
+                            reject(new Error('Tidak dapat membaca file "' + file.name + '".'));
+                        };
+                        reader.readAsText(file);
+                    });
+                });
+
+                Promise.all(fileReads).then(function (fileParts) {
+                    var parts = [];
+
+                    Array.prototype.forEach.call(form.elements, function (el) {
+                        if (!el.name || el.type === 'file' || el.disabled) return;
+                        if ((el.type === 'checkbox' || el.type === 'radio') && !el.checked) return;
+                        parts.push(
+                            '--' + boundary + '\r\n' +
+                            'Content-Disposition: form-data; name="' + el.name + '"\r\n\r\n' +
+                            el.value + '\r\n'
+                        );
+                    });
+
+                    fileParts.forEach(function (f) {
+                        parts.push(
+                            '--' + boundary + '\r\n' +
+                            'Content-Disposition: form-data; name="' + f.name + '"; filename="' + f.filename + '"\r\n' +
+                            'Content-Type: ' + f.type + '\r\n\r\n' +
+                            f.content + '\r\n'
+                        );
+                    });
+
+                    parts.push('--' + boundary + '--\r\n');
+
+                    return fetch(form.getAttribute('action') || form.action, {
+                        method: (form.getAttribute('method') || 'POST').toUpperCase(),
+                        headers: {
+                            'Content-Type': 'multipart/form-data; boundary=' + boundary,
+                            'X-NativePHP-Skip-Redirect-Follow': '1'
+                        },
+                        body: parts.join('')
+                    });
+                }).then(function (response) {
+                    // A real navigation re-runs the WebView's full page lifecycle
+                    // (onPageFinished, script re-injection, CSRF re-extraction) —
+                    // far more robust than trying to splice a response body into
+                    // the currently-loaded document.
+                    window.location.href = (response && response.url) ? response.url : form.action;
+                }).catch(function (err) {
+                    console.error('NativePHP file upload error:', err);
+                    alert('Gagal memproses file: ' + (err && err.message ? err.message : 'Terjadi kesalahan tidak dikenal.'));
+                });
+            }
+
+            // Capture XHR/AJAX requests
+            var originalXHROpen = XMLHttpRequest.prototype.open;
+            var originalXHRSend = XMLHttpRequest.prototype.send;
+            var originalXHRSetHeader = XMLHttpRequest.prototype.setRequestHeader;
+
+            XMLHttpRequest.prototype.open = function(method, url) {
+                this._method = method;
+                this._url = url;
+                return originalXHROpen.apply(this, arguments);
+            };
+
+            XMLHttpRequest.prototype.send = function(data) {
+                if (["post", "patch", "put"].includes(this._method.toLowerCase()) && data) {
+                    var reqId = 'nphp_' + (++_nphpReqId) + '_' + Date.now();
+                    AndroidPOST.logPostData(String(data), this._url, "", reqId);
+                    originalXHRSetHeader.call(this, 'X-NativePHP-Req-Id', reqId);
+                }
+                return originalXHRSend.apply(this, arguments);
+            };
+
+            // Capture fetch() requests
+            var originalFetch = window.fetch;
+
+            window.fetch = function(url, options) {
+                if (options && options.method && ["post", "patch", "put"].includes(options.method.toLowerCase()) && options.body) {
+                    var reqId = 'nphp_' + (++_nphpReqId) + '_' + Date.now();
+
+                    var bodyStr = options.body;
+                    if (options.body instanceof FormData) {
+                        // Convert FormData to URLSearchParams for PHP form parsing
+                        var urlParams = new URLSearchParams();
+                        options.body.forEach(function(value, key) {
+                            urlParams.append(key, value);
+                        });
+                        bodyStr = urlParams.toString();
+                    } else if (typeof options.body === 'object' && !(options.body instanceof Blob) && !(options.body instanceof ArrayBuffer)) {
+                        bodyStr = JSON.stringify(options.body);
+                    }
+
+                    AndroidPOST.logPostData(String(bodyStr), url, "", reqId);
+
+                    // Add request ID header to the actual fetch request
+                    if (!options.headers) {
+                        options.headers = {};
+                    }
+                    if (options.headers instanceof Headers) {
+                        options.headers.set('X-NativePHP-Req-Id', reqId);
+                    } else {
+                        options.headers['X-NativePHP-Req-Id'] = reqId;
+                    }
+                }
+                return originalFetch.apply(this, arguments);
+            };
+
+            // Find CSRF token
+            function findAndSendCsrfToken() {
+                var tokenField = document.querySelector('input[name="_token"]');
+                if (tokenField) {
+                    AndroidPOST.storeCsrfToken(tokenField.value);
+                    return;
+                }
+
+                if (window.livewire && window.livewire.csrfToken) {
+                    AndroidPOST.storeCsrfToken(window.livewire.csrfToken);
+                }
+            }
+
+            findAndSendCsrfToken();
+
+            var observer = new MutationObserver(function() {
+                findAndSendCsrfToken();
+            });
+
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+
+            return "POST+PATCH+PUT interception installed";
+        })();
+    """.trimIndent()
+
+        view.evaluateJavascript(jsCode) { result ->
+            Log.d(TAG, "JavaScript injection result: $result")
+        }
+    }
+
+
+    private fun setupJavaScriptInterfaces() {
+        webView.addJavascriptInterface(JSBridge(phpBridge, TAG), "AndroidPOST")
+    }
+
+    // Helper methods
+    fun isStaticAssetExtension(url: String): Boolean {
+        val staticExtensions = listOf(
+            ".js", ".css", ".png", ".jpg", ".jpeg", ".gif", ".svg", ".woff",
+            ".woff2", ".ttf", ".eot", ".ico", ".json", ".map"
+        )
+        return staticExtensions.any { url.endsWith(it) || url.contains("$it?") }
+    }
+}
+
+class JSBridge(private val phpBridge: PHPBridge, private val TAG: String) {
+    @JavascriptInterface
+    fun logPostData(data: String, url: String, headers: String, requestId: String) {
+        Log.d("$TAG-JS", "📦 POST data captured (fetch/XHR) for: $url reqId=$requestId (length=${data.length})")
+
+        // Store by unique request ID — fetch/XHR requests carry the ID as a header
+        phpBridge.storePostData(requestId, data)
+
+        // Try to extract CSRF token
+        LaravelSecurity.extractFromPostBody(data)
+    }
+
+    @JavascriptInterface
+    fun logFormPostData(data: String, url: String) {
+        // Native form submissions can't carry custom headers, so store by URL
+        // shouldInterceptRequest will look up by URL in the fallback path
+        val path = android.net.Uri.parse(url).path ?: url
+        Log.d("$TAG-JS", "📦 POST data captured (form) for: $url path=$path (length=${data.length})")
+
+        phpBridge.storePostData(url, data)
+        // Also store by path in case shouldInterceptRequest receives the full URL
+        if (path != url) {
+            phpBridge.storePostData(path, data)
+        }
+
+        // Try to extract CSRF token
+        LaravelSecurity.extractFromPostBody(data)
+    }
+
+    @JavascriptInterface
+    fun storeCsrfToken(token: String) {
+        Log.d("$TAG-CSRF", "🔑 JS provided token: $token")
+        LaravelSecurity.set(token)
+    }
+
+    private fun extractCsrfToken(postData: String?) {
+        if (postData.isNullOrEmpty()) return
+
+        try {
+            // Check if it's JSON
+            if (postData.startsWith("{")) {
+                val jsonObj = JSONObject(postData)
+
+                // Look for _token field
+                if (jsonObj.has("_token")) {
+                    val token = jsonObj.getString("_token")
+                    Log.d("$TAG-CSRF", "🔑 Extracted token from POST data: $token")
+                    LaravelSecurity.set(token)
+                }
+            }
+            // Check for form data format
+            else if (postData.contains("_token=")) {
+                val parts = postData.split("&")
+                for (part in parts) {
+                    if (part.startsWith("_token=")) {
+                        val token = part.substring("_token=".length)
+                        Log.d("$TAG-CSRF", "🔑 Extracted token from form data: $token")
+                        LaravelSecurity.set(token)
+                        break
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("$TAG-CSRF", "⚠️ Error extracting CSRF token: ${e.message}")
+        }
+    }
+}

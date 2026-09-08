@@ -1,0 +1,8 @@
+{
+    "version": "0.0.2",
+    "version_code": "30",
+    "bifrost_app_id": null,
+    "runtime_mode": "persistent",
+    "entry_mode": "auto",
+    "native_routes": []
+}

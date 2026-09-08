@@ -1,0 +1,11 @@
+# Keep NativePHP source code, ignore generated/runtime files
+
+/android/.gradle/
+/android/app/build/
+/android/app/.cxx/
+/android/local.properties
+/android-build.log
+/binaries/
+
+# Generated Android bundle/runtime artifacts
+/android/app/src/main/assets/laravel_bundle.zip
