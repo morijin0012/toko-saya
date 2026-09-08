@@ -137,4 +137,4 @@ Data transaksi disimpan secara lokal sehingga fitur utama aplikasi tetap dapat d
   <img src="screenshots/restock.jpeg" width="30%">
   <img src="screenshots/expenses.jpeg" width="30%">
   <img src="screenshots/dark-mode.jpeg" width="30%">
-</p>  +-- SQLite
+</p> 
