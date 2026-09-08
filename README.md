@@ -2,9 +2,17 @@
 
 > Offline POS & Inventory Management Android App built with Laravel and NativePHP.
 
-Toko Saya adalah aplikasi kasir dan manajemen stok yang dirancang untuk membantu usaha kecil mengelola produk, penjualan, pengeluaran, restock, laporan, dan arsip backup dalam satu aplikasi Android yang dapat digunakan secara offline.
+Toko Saya adalah aplikasi kasir dan manajemen stok yang saya buat untuk membantu pencatatan operasional toko sehari-hari.
 
-Project ini dibangun sebagai aplikasi nyata sekaligus sebagai project portfolio untuk menunjukkan kemampuan dalam pengembangan Laravel, database, frontend, testing, dan integrasi Android.
+Aplikasi ini mencakup pengelolaan produk, penjualan, restock, pengeluaran, laporan bulanan, serta backup data. Fokus utama project ini adalah membuat aplikasi yang tetap dapat digunakan secara offline di Android.
+
+Saya membangun project ini sambil mempelajari dan menerapkan Laravel, SQLite, Blade, JavaScript, testing, serta integrasi NativePHP dengan Android.
+
+## Why I Built It
+
+Saya ingin membuat aplikasi kasir sederhana yang tidak bergantung pada koneksi internet untuk penggunaan sehari-hari.
+
+Selama mengembangkan Toko Saya, saya fokus pada penyimpanan data lokal, pencatatan transaksi, pengelolaan stok, backup dan restore, serta pengalaman penggunaan di perangkat mobile.
 
 ---
 
@@ -137,4 +145,201 @@ Data transaksi disimpan secara lokal sehingga fitur utama aplikasi tetap dapat d
   <img src="screenshots/restock.jpeg" width="30%">
   <img src="screenshots/expenses.jpeg" width="30%">
   <img src="screenshots/dark-mode.jpeg" width="30%">
-</p> 
+</p>
+
+---
+
+## Testing
+
+Automated tests digunakan untuk memvalidasi fitur utama aplikasi.
+
+Current test status:
+
+```text
+48 tests passed
+```
+
+Area yang diuji mencakup:
+
+- Product management
+- Sales
+- Restock
+- Expenses
+- Monthly reports
+- Backup
+- Restore
+- UUID data integrity
+- Automatic backup
+- Backup archive management
+
+---
+
+## Android
+
+Aplikasi dikemas sebagai Android APK menggunakan NativePHP Mobile.
+
+```text
+Android API 36
+```
+
+Package:
+
+```text
+com.rizky.cloudsummitquasar
+```
+
+---
+
+## What I Focused On
+
+### Offline-first
+
+Saya merancang aplikasi agar fitur utama tetap dapat digunakan tanpa koneksi internet dan data utama tersimpan secara lokal.
+
+### Backup & Restore
+
+Saya membuat sistem backup bulanan dengan arsip JSON dan laporan TXT agar data dapat disimpan dan dipulihkan kembali.
+
+### Stable UUID
+
+UUID digunakan untuk menjaga identitas data tetap konsisten ketika proses backup dan restore dilakukan.
+
+### Mobile Product Picker
+
+Saya membuat product picker dengan fitur pencarian agar pemilihan produk tetap nyaman ketika jumlah produk bertambah.
+
+### Responsive Mobile Navigation
+
+Saya membuat navigasi khusus mobile untuk memudahkan perpindahan antar fitur utama aplikasi.
+
+### Light & Dark Mode
+
+Saya menambahkan mode terang dan gelap serta menyesuaikan tampilan system bar Android agar tema aplikasi tetap konsisten.
+
+---
+
+## Installation
+
+Clone repository:
+
+```bash
+git clone https://github.com/morijin0012/toko-saya.git
+cd toko-saya
+```
+
+Install PHP dependencies:
+
+```bash
+composer install
+```
+
+Install frontend dependencies:
+
+```bash
+npm install
+```
+
+Copy environment file:
+
+```bash
+cp .env.example .env
+```
+
+Generate application key:
+
+```bash
+php artisan key:generate
+```
+
+Run database migrations:
+
+```bash
+php artisan migrate
+```
+
+Build frontend assets:
+
+```bash
+npm run build
+```
+
+---
+
+## Run Development Server
+
+```bash
+php artisan serve
+```
+
+For frontend development:
+
+```bash
+npm run dev
+```
+
+---
+
+## Build Android APK
+
+The Android application is packaged using NativePHP Mobile.
+
+```bash
+php artisan native:package android --build-type=release
+```
+
+---
+
+## Project Structure
+
+```text
+app/
+├── Http/
+├── Models/
+├── Services/
+└── Providers/
+
+database/
+├── migrations/
+└── seeders/
+
+resources/
+├── css/
+├── js/
+└── views/
+
+routes/
+└── web.php
+
+tests/
+├── Feature/
+└── Unit/
+
+nativephp/
+└── android/
+```
+
+---
+
+## Next Improvements
+
+Beberapa hal yang ingin saya kembangkan berikutnya:
+
+- Product categories
+- More advanced reporting
+- Additional data export options
+- Improved backup management
+- Additional Android native integrations
+
+---
+
+## Author
+
+**Rizky**
+
+Personal project built to learn, experiment, and improve my skills in Laravel, mobile application development, and software engineering.
+
+---
+
+## License
+
+This project is intended primarily as a portfolio and learning project.
