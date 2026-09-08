@@ -1,22 +1,24 @@
 # Toko Saya
 
-> Offline POS & Inventory Management Android App built with Laravel and NativePHP.
+> Aplikasi Kasir dan Manajemen Stok Android Offline berbasis Laravel dan NativePHP.
 
 Toko Saya adalah aplikasi kasir dan manajemen stok yang saya buat untuk membantu pencatatan operasional toko sehari-hari.
 
-Aplikasi ini mencakup pengelolaan produk, penjualan, restock, pengeluaran, laporan bulanan, serta backup data. Fokus utama project ini adalah membuat aplikasi yang tetap dapat digunakan secara offline di Android.
+Aplikasi ini mencakup pengelolaan produk, penjualan, restock, pengeluaran, laporan bulanan, dan backup data. Fokus utama project ini adalah membuat aplikasi yang tetap dapat digunakan secara offline di Android.
 
 Saya membangun project ini sambil mempelajari dan menerapkan Laravel, SQLite, Blade, JavaScript, testing, serta integrasi NativePHP dengan Android.
 
-## Why I Built It
+---
+
+## Mengapa Saya Membuat Aplikasi Ini
 
 Saya ingin membuat aplikasi kasir sederhana yang tidak bergantung pada koneksi internet untuk penggunaan sehari-hari.
 
-Selama mengembangkan Toko Saya, saya fokus pada penyimpanan data lokal, pencatatan transaksi, pengelolaan stok, backup dan restore, serta pengalaman penggunaan di perangkat mobile.
+Selama mengembangkan Toko Saya, saya fokus pada penyimpanan data lokal, pencatatan transaksi, pengelolaan stok, backup data, serta pengalaman penggunaan di perangkat mobile.
 
 ---
 
-## Features
+## Fitur
 
 ### Dashboard
 
@@ -25,7 +27,7 @@ Selama mengembangkan Toko Saya, saya fokus pada penyimpanan data lokal, pencatat
 - Pengeluaran
 - Stok dan aktivitas utama
 
-### Product Management
+### Pengelolaan Produk
 
 - Tambah produk
 - Edit produk
@@ -33,7 +35,7 @@ Selama mengembangkan Toko Saya, saya fokus pada penyimpanan data lokal, pencatat
 - Informasi harga dan stok
 - Pencarian produk
 
-### Sales
+### Penjualan
 
 - Pencatatan transaksi penjualan
 - Pemilihan produk dengan product picker
@@ -49,7 +51,7 @@ Selama mengembangkan Toko Saya, saya fokus pada penyimpanan data lokal, pencatat
 - Pencarian produk
 - Riwayat restock
 
-### Expense Management
+### Pengeluaran
 
 - Pencatatan pengeluaran
 - Kategori pengeluaran
@@ -57,7 +59,7 @@ Selama mengembangkan Toko Saya, saya fokus pada penyimpanan data lokal, pencatat
 - Format nominal Rupiah
 - Edit dan hapus pengeluaran
 
-### Monthly Reports
+### Laporan Bulanan
 
 - Laporan penjualan
 - Laporan pengeluaran
@@ -65,51 +67,51 @@ Selama mengembangkan Toko Saya, saya fokus pada penyimpanan data lokal, pencatat
 - Ringkasan hasil bersih
 - Status untung/rugi
 
-### Backup & Data Management
+### Backup Data
 
 - Arsip backup berdasarkan bulan
-- Backup JSON
-- Laporan TXT
+- Backup dalam format JSON
+- Laporan dalam format TXT
 - Perlindungan terhadap duplikasi data
-- Stable UUID untuk data penting
+- UUID stabil untuk data penting
 - Pengelolaan data lokal
 
-### User Interface
+### Antarmuka Pengguna
 
-- Responsive mobile-first interface
-- Mobile bottom navigation
-- Custom product picker
-- Product search
-- Light mode
-- Dark mode
-- Android system bar theme synchronization
+- Antarmuka responsif untuk perangkat mobile
+- Navigasi bawah khusus mobile
+- Product picker dengan pencarian
+- Pencarian produk
+- Mode terang
+- Mode gelap
+- Sinkronisasi tema system bar Android
 
-### Offline
+### Penggunaan Offline
 
-- SQLite local database
+- SQLite sebagai database lokal
 - Penggunaan utama tidak membutuhkan koneksi internet
 - Data tersimpan secara lokal pada perangkat
 
 ---
 
-## Technology Stack
+## Teknologi yang Digunakan
 
-| Technology | Usage |
+| Teknologi | Penggunaan |
 |---|---|
 | PHP 8.4 | Backend |
-| Laravel 13 | Application framework |
-| SQLite | Local database |
-| Blade | Server-rendered UI |
-| JavaScript | Interactive UI |
-| CSS | Responsive interface |
-| NativePHP Mobile | Android integration |
-| Kotlin | Native Android integration |
-| Vite | Frontend asset build |
-| Pest / PHPUnit | Automated testing |
+| Laravel 13 | Kerangka aplikasi |
+| SQLite | Database lokal |
+| Blade | Antarmuka berbasis server |
+| JavaScript | Interaksi antarmuka |
+| CSS | Tampilan responsif |
+| NativePHP Mobile | Integrasi Android |
+| Kotlin | Integrasi Android native |
+| Vite | Pembuatan aset frontend |
+| Pest / PHPUnit | Pengujian otomatis |
 
 ---
 
-## Architecture
+## Arsitektur
 
 Aplikasi menggunakan pendekatan offline-first.
 
@@ -129,11 +131,11 @@ Android App
     +-- SQLite
 ```
 
-Data transaksi disimpan secara lokal sehingga fitur utama aplikasi tetap dapat digunakan tanpa koneksi internet.
+Data utama aplikasi disimpan secara lokal sehingga fitur utama tetap dapat digunakan tanpa koneksi internet.
 
 ---
 
-## Screenshots
+## Tangkapan Layar
 
 <p align="center">
   <img src="screenshots/dashboard.jpeg" width="30%">
@@ -149,34 +151,34 @@ Data transaksi disimpan secara lokal sehingga fitur utama aplikasi tetap dapat d
 
 ---
 
-## Testing
+## Pengujian
 
-Automated tests digunakan untuk memvalidasi fitur utama aplikasi.
+Aplikasi memiliki pengujian otomatis untuk memvalidasi fitur-fitur utama.
 
-Current test status:
+Status pengujian terakhir:
 
 ```text
-48 tests passed
+48 pengujian berhasil
+197 assertions
 ```
 
-Area yang diuji mencakup:
+Pengujian mencakup:
 
-- Product management
-- Sales
+- Pengelolaan produk
+- Penjualan
 - Restock
-- Expenses
-- Monthly reports
-- Backup
-- Restore
-- UUID data integrity
-- Automatic backup
-- Backup archive management
+- Pengeluaran
+- Laporan bulanan
+- Backup data
+- UUID data
+- Backup otomatis
+- Pengelolaan arsip backup
 
 ---
 
 ## Android
 
-Aplikasi dikemas sebagai Android APK menggunakan NativePHP Mobile.
+Aplikasi dikemas menjadi APK Android menggunakan NativePHP Mobile.
 
 ```text
 Android API 36
@@ -190,35 +192,35 @@ com.rizky.cloudsummitquasar
 
 ---
 
-## What I Focused On
+## Hal yang Saya Fokuskan
 
 ### Offline-first
 
 Saya merancang aplikasi agar fitur utama tetap dapat digunakan tanpa koneksi internet dan data utama tersimpan secara lokal.
 
-### Backup & Restore
+### Backup Data
 
-Saya membuat sistem backup bulanan dengan arsip JSON dan laporan TXT agar data dapat disimpan dan dipulihkan kembali.
+Saya membuat sistem backup bulanan dengan arsip JSON dan laporan TXT agar data toko dapat disimpan secara teratur.
 
-### Stable UUID
+### UUID Stabil
 
-UUID digunakan untuk menjaga identitas data tetap konsisten ketika proses backup dan restore dilakukan.
+UUID digunakan untuk menjaga identitas data tetap konsisten pada data penting aplikasi.
 
-### Mobile Product Picker
+### Product Picker Mobile
 
 Saya membuat product picker dengan fitur pencarian agar pemilihan produk tetap nyaman ketika jumlah produk bertambah.
 
-### Responsive Mobile Navigation
+### Navigasi Mobile
 
 Saya membuat navigasi khusus mobile untuk memudahkan perpindahan antar fitur utama aplikasi.
 
-### Light & Dark Mode
+### Mode Terang dan Gelap
 
 Saya menambahkan mode terang dan gelap serta menyesuaikan tampilan system bar Android agar tema aplikasi tetap konsisten.
 
 ---
 
-## Installation
+## Instalasi
 
 Clone repository:
 
@@ -227,37 +229,37 @@ git clone https://github.com/morijin0012/toko-saya.git
 cd toko-saya
 ```
 
-Install PHP dependencies:
+Pasang dependensi PHP:
 
 ```bash
 composer install
 ```
 
-Install frontend dependencies:
+Pasang dependensi frontend:
 
 ```bash
 npm install
 ```
 
-Copy environment file:
+Salin file environment:
 
 ```bash
 cp .env.example .env
 ```
 
-Generate application key:
+Buat application key:
 
 ```bash
 php artisan key:generate
 ```
 
-Run database migrations:
+Jalankan migration database:
 
 ```bash
 php artisan migrate
 ```
 
-Build frontend assets:
+Bangun aset frontend:
 
 ```bash
 npm run build
@@ -265,13 +267,15 @@ npm run build
 
 ---
 
-## Run Development Server
+## Menjalankan Aplikasi
+
+Jalankan server Laravel:
 
 ```bash
 php artisan serve
 ```
 
-For frontend development:
+Untuk pengembangan frontend:
 
 ```bash
 npm run dev
@@ -279,9 +283,9 @@ npm run dev
 
 ---
 
-## Build Android APK
+## Membuat APK Android
 
-The Android application is packaged using NativePHP Mobile.
+Aplikasi dapat dikemas menjadi APK Android menggunakan NativePHP Mobile.
 
 ```bash
 php artisan native:package android --build-type=release
@@ -289,7 +293,7 @@ php artisan native:package android --build-type=release
 
 ---
 
-## Project Structure
+## Struktur Project
 
 ```text
 app/
@@ -316,30 +320,40 @@ tests/
 
 nativephp/
 └── android/
+
+screenshots/
+├── dashboard.jpeg
+├── products.jpeg
+├── sales.jpeg
+├── restock.jpeg
+├── expenses.jpeg
+└── dark-mode.jpeg
 ```
 
 ---
 
-## Next Improvements
+## Pengembangan Berikutnya
 
-Beberapa hal yang ingin saya kembangkan berikutnya:
+Pengembangan berikutnya akan menyesuaikan masukan dari orang yang menggunakan atau mencoba aplikasi ini.
 
-- Product categories
-- More advanced reporting
-- Additional data export options
-- Improved backup management
-- Additional Android native integrations
+Beberapa hal yang ingin saya perhatikan:
+
+- Perbaikan tampilan dan pengalaman penggunaan
+- Penyederhanaan alur transaksi
+- Penyesuaian berdasarkan masukan pengguna
+- Penyempurnaan fitur yang sudah ada
+- Penambahan fitur yang benar-benar dibutuhkan pengguna
 
 ---
 
-## Author
+## Pembuat
 
 **Rizky**
 
-Personal project built to learn, experiment, and improve my skills in Laravel, mobile application development, and software engineering.
+Project pribadi yang saya buat untuk belajar, bereksperimen, dan meningkatkan kemampuan dalam Laravel, pengembangan aplikasi mobile, dan rekayasa perangkat lunak.
 
 ---
 
-## License
+## Lisensi
 
-This project is intended primarily as a portfolio and learning project.
+Project ini menggunakan MIT License.
